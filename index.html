@@ -1,1 +1,44 @@
-"Hello movievoter 2" 
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Movie Voting</title>
+    <link rel="stylesheet" href="style.css" type="text/css"/>
+  </head>
+  <body>
+    <span id="part1">
+      <label for="movieList">Movie List</label>
+      <ul id="movieList"></ul>
+      <label for="movieInput">movie title</label>
+      <input id="movieInput">
+      <button id="movieSubmitButton">Submit</button>
+      <br/>
+      <label for="nameList">Name List</label>
+      <ul id="nameList"></ul>
+      <label for="nameInput">name</label>
+      <input id="nameInput">
+      <button id="nameSubmitButton">Submit</button>
+      <br/>
+      <input type="number" id="voteCountInput" min="1" max="1" value="1" autocomplete="off" required>
+      <br/>
+      <button id="part1Submit" disabled autocomplete="off">Confirm Choices</button>
+    </span>
+
+    <span id="part2" hidden>
+      <h1 id="currentName"></h1>
+      <ul id="checkboxList"></ul>
+      <button id="part2Submit" disabled autocomplete="off">Confirm Choices</button>
+    </span>
+
+    <span id="part3" hidden>
+      <table id="resultTable">
+        <tr>
+          <th>Movie</th>
+          <th>Votes</th>
+        </tr>
+      </table>
+    </span>
+
+    <script src="movievoting.js" async></script>
+  </body>
+</html>
