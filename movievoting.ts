@@ -14,41 +14,47 @@ function disablePart1SubmitIfInvalid() {
     part1Submit.disabled = !checkPart1Validity()
 }
 
+function updateVoteCountInput() {
+    let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
+    let movieList = getNodeId('movieList') as HTMLUListElement
+    let movieCount = movieList.children.length
+
+    voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1)
+    if (+voteCountInput.value > +voteCountInput.max) {
+        voteCountInput.value = voteCountInput.max
+    }
+}
+
+function addToList(elementName: string, list: HTMLUListElement) {
+    elementName = elementName.trim()
+    if (!elementName.length) return
+
+    let li = document.createElement('li')
+    li.appendChild(document.createTextNode(elementName))
+    list.appendChild(li)
+}
+
 function movieSubmit() {
     let movieTextArea = getNodeId('movieTextArea') as HTMLTextAreaElement
+    let movieList = document.getElementById('movieList') as HTMLUListElement
 
-    for (let movieName of movieTextArea.value.split('\n')) {
-        movieName = movieName.trim()
-        if (movieName.length === 0) continue
-
-        let li = document.createElement('li')
-        li.appendChild(document.createTextNode(movieName))
-        let movieList = getNodeId('movieList') as HTMLUListElement
-        movieList.appendChild(li)
-
-        if (movieList.children.length > 1) {
-            let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-            voteCountInput.max = String(movieList.children.length - 1)
-        }
-
-        movieTextArea.value = ''
+    for (let movieName of movieTextArea.value.trim().split('\n')) {
+        addToList(movieName, movieList)
     }
 
+    updateVoteCountInput()
+    movieTextArea.value = ''
     movieTextArea.focus()
     disablePart1SubmitIfInvalid()
 }
 
 function nameSubmit() {
-    let nameInput = getNodeId('nameInput') as HTMLInputElement
-    nameInput.value = nameInput.value.trim()
-    let name = nameInput.value
-    if (name.length === 0) return
-    let li = document.createElement('li')
-    li.appendChild(document.createTextNode(nameInput.value))
     let nameList = getNodeId('nameList') as HTMLUListElement
-    nameList.appendChild(li)
-    nameInput.value = ''
+    let nameInput = getNodeId('nameInput') as HTMLInputElement
 
+    addToList(nameInput.value, nameList)
+
+    nameInput.value = ''
     disablePart1SubmitIfInvalid()
 }
 
@@ -198,9 +204,15 @@ part2Submit.onclick = () => {
         for (let i of sortedIndexList)  {
             let movieTd = document.createElement('td')
             movieTd.textContent = movieList.children[i].textContent
+
             let voteTd = document.createElement('td')
             voteTd.textContent = String(gVoteList[i])
+
+            let checkbox = document.createElement('input')
+            checkbox.type = 'checkbox'
+
             let tr = document.createElement('tr')
+            tr.appendChild(checkbox)
             tr.appendChild(movieTd)
             tr.appendChild(voteTd)
             tableBody.appendChild(tr)
@@ -212,6 +224,21 @@ part2Submit.onclick = () => {
             let part3 = getNodeId('part3') as HTMLSpanElement
             part1.hidden = false
             part3.hidden = true
+
+            // clear movieList before re-adding the movies that are checked
+            while (movieList.firstChild) {
+                movieList.removeChild(movieList.firstChild)
+            }
+
+            for (let row of tableBody.children) {
+                let checkbox = row.children[0] as HTMLInputElement
+                let movieName = row.children[1].textContent!
+                if (checkbox.checked) {
+                    addToList(movieName, movieList)
+                }
+            }
+
+            updateVoteCountInput()
         }
     }
 }
