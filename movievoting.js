@@ -13,21 +13,22 @@ function disablePart1SubmitIfInvalid() {
     part1Submit.disabled = !checkPart1Validity();
 }
 function movieSubmit() {
-    let movieInput = getNodeId('movieInput');
-    movieInput.focus();
-    movieInput.value = movieInput.value.trim();
-    let movieName = movieInput.value;
-    if (movieName.length === 0)
-        return;
-    let li = document.createElement('li');
-    li.appendChild(document.createTextNode(movieInput.value));
-    let movieList = getNodeId('movieList');
-    movieList.appendChild(li);
-    movieInput.value = '';
-    if (movieList.children.length > 1) {
-        let voteCountInput = getNodeId('voteCountInput');
-        voteCountInput.max = String(movieList.children.length - 1);
+    let movieTextArea = getNodeId('movieTextArea');
+    for (let movieName of movieTextArea.value.split('\n')) {
+        movieName = movieName.trim();
+        if (movieName.length === 0)
+            continue;
+        let li = document.createElement('li');
+        li.appendChild(document.createTextNode(movieName));
+        let movieList = getNodeId('movieList');
+        movieList.appendChild(li);
+        if (movieList.children.length > 1) {
+            let voteCountInput = getNodeId('voteCountInput');
+            voteCountInput.max = String(movieList.children.length - 1);
+        }
+        movieTextArea.value = '';
     }
+    movieTextArea.focus();
     disablePart1SubmitIfInvalid();
 }
 function nameSubmit() {
@@ -47,12 +48,6 @@ let voteList = [];
 let votesLeft = 0;
 let movieSubmitButton = getNodeId('movieSubmitButton');
 movieSubmitButton.onclick = movieSubmit;
-let movieInput = getNodeId('movieInput');
-movieInput.onkeypress = (keyboardEvent) => {
-    if (keyboardEvent.key === 'Enter') {
-        movieSubmit();
-    }
-};
 let nameSubmitButton = getNodeId('nameSubmitButton');
 nameSubmitButton.onclick = nameSubmit;
 let nameInput = getNodeId('nameInput');

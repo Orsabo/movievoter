@@ -15,21 +15,26 @@ function disablePart1SubmitIfInvalid() {
 }
 
 function movieSubmit() {
-    let movieInput = getNodeId('movieInput') as HTMLInputElement
-    movieInput.focus()
-    movieInput.value = movieInput.value.trim()
-    let movieName = movieInput.value
-    if (movieName.length === 0) return
-    let li = document.createElement('li')
-    li.appendChild(document.createTextNode(movieInput.value))
-    let movieList = getNodeId('movieList') as HTMLUListElement
-    movieList.appendChild(li)
-    movieInput.value = ''
-    if (movieList.children.length > 1) {
-        let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-        voteCountInput.max = String(movieList.children.length - 1)
+    let movieTextArea = getNodeId('movieTextArea') as HTMLTextAreaElement
+
+    for (let movieName of movieTextArea.value.split('\n')) {
+        movieName = movieName.trim()
+        if (movieName.length === 0) continue
+
+        let li = document.createElement('li')
+        li.appendChild(document.createTextNode(movieName))
+        let movieList = getNodeId('movieList') as HTMLUListElement
+        movieList.appendChild(li)
+
+        if (movieList.children.length > 1) {
+            let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
+            voteCountInput.max = String(movieList.children.length - 1)
+        }
+
+        movieTextArea.value = ''
     }
 
+    movieTextArea.focus()
     disablePart1SubmitIfInvalid()
 }
 
@@ -52,13 +57,6 @@ let votesLeft = 0
 
 let movieSubmitButton = getNodeId('movieSubmitButton') as HTMLButtonElement
 movieSubmitButton.onclick = movieSubmit
-
-let movieInput = getNodeId('movieInput') as HTMLInputElement
-movieInput.onkeypress = (keyboardEvent) => {
-    if (keyboardEvent.key === 'Enter') {
-        movieSubmit()
-    }
-}
 
 let nameSubmitButton = getNodeId('nameSubmitButton') as HTMLButtonElement
 nameSubmitButton.onclick = nameSubmit
