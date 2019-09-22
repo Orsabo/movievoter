@@ -153,6 +153,7 @@ part2Submit.onclick = () => {
         currentName.textContent = nameList.children[gCurrentNameIndex].textContent;
     }
     else {
+        gCurrentNameIndex = 0;
         // set up part 3
         let part2 = getNodeId('part2');
         let part3 = getNodeId('part3');
@@ -166,6 +167,11 @@ part2Submit.onclick = () => {
         sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a]);
         // show results
         let movieList = getNodeId('movieList');
+        let tableBody = document.getElementById('resultTableBody');
+        // clear results table body before adding to it
+        while (tableBody.firstChild) {
+            tableBody.removeChild(tableBody.firstChild);
+        }
         for (let i of sortedIndexList) {
             let movieTd = document.createElement('td');
             movieTd.textContent = movieList.children[i].textContent;
@@ -174,8 +180,14 @@ part2Submit.onclick = () => {
             let tr = document.createElement('tr');
             tr.appendChild(movieTd);
             tr.appendChild(voteTd);
-            let tableBody = document.getElementById('resultTableBody');
             tableBody.appendChild(tr);
         }
+        let restartButton = document.getElementById('restartButton');
+        restartButton.onclick = () => {
+            let part1 = getNodeId('part1');
+            let part3 = getNodeId('part3');
+            part1.hidden = false;
+            part3.hidden = true;
+        };
     }
 };

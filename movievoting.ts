@@ -171,6 +171,8 @@ part2Submit.onclick = () => {
         let currentName = getNodeId('currentName') as HTMLHeadingElement
         currentName.textContent = nameList.children[gCurrentNameIndex].textContent
     } else {
+        gCurrentNameIndex = 0
+
         // set up part 3
         let part2 = getNodeId('part2') as HTMLSpanElement
         let part3 = getNodeId('part3') as HTMLSpanElement
@@ -186,6 +188,13 @@ part2Submit.onclick = () => {
 
         // show results
         let movieList = getNodeId('movieList') as HTMLUListElement
+        let tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
+
+        // clear results table body before adding to it
+        while (tableBody.firstChild) {
+            tableBody.removeChild(tableBody.firstChild)
+        }
+
         for (let i of sortedIndexList)  {
             let movieTd = document.createElement('td')
             movieTd.textContent = movieList.children[i].textContent
@@ -194,8 +203,15 @@ part2Submit.onclick = () => {
             let tr = document.createElement('tr')
             tr.appendChild(movieTd)
             tr.appendChild(voteTd)
-            let tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
             tableBody.appendChild(tr)
+        }
+
+        let restartButton = document.getElementById('restartButton') as HTMLButtonElement
+        restartButton.onclick = () => {
+            let part1 = getNodeId('part1') as HTMLSpanElement
+            let part3 = getNodeId('part3') as HTMLSpanElement
+            part1.hidden = false
+            part3.hidden = true
         }
     }
 }
