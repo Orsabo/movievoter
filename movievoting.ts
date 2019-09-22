@@ -181,8 +181,8 @@ part2Submit.onclick = () => {
             let tr = document.createElement('tr')
             tr.appendChild(movieTd)
             tr.appendChild(voteTd)
-            let table = document.getElementById('resultTable') as HTMLTableElement
-            table.appendChild(tr)
+            let tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
+            tableBody.appendChild(tr)
         }
     }
 }

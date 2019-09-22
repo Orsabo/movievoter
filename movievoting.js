@@ -163,8 +163,8 @@ part2Submit.onclick = () => {
             let tr = document.createElement('tr');
             tr.appendChild(movieTd);
             tr.appendChild(voteTd);
-            let table = document.getElementById('resultTable');
-            table.appendChild(tr);
+            let tableBody = document.getElementById('resultTableBody');
+            tableBody.appendChild(tr);
         }
     }
 };
