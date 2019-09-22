@@ -80,6 +80,10 @@ part1Submit.onclick = () => {
     // setting up part 2
     let currentName = getNodeId('currentName');
     currentName.textContent = nameList.children[gCurrentNameIndex].textContent;
+    let checkboxList = getNodeId('checkboxList');
+    while (checkboxList.firstChild) {
+        checkboxList.removeChild(checkboxList.firstChild);
+    }
     for (let i = 0; i < movieList.children.length; ++i) {
         let movie = movieList.children[i];
         let checkbox = document.createElement('input');
@@ -116,7 +120,6 @@ part1Submit.onclick = () => {
         let li = document.createElement('li');
         li.appendChild(checkbox);
         li.appendChild(label);
-        let checkboxList = getNodeId('checkboxList');
         checkboxList.appendChild(li);
     }
     gVoteList = new Array(movieList.children.length);
