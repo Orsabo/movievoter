@@ -52,33 +52,41 @@ function nameSubmit() {
     disablePart1SubmitIfInvalid()
 }
 
-let voteList: number[] = []
-let votesLeft = 0
+{
+    let movieSubmitButton = getNodeId('movieSubmitButton') as HTMLButtonElement
+    movieSubmitButton.onclick = movieSubmit
+}
 
-let movieSubmitButton = getNodeId('movieSubmitButton') as HTMLButtonElement
-movieSubmitButton.onclick = movieSubmit
+{
+    let nameSubmitButton = getNodeId('nameSubmitButton') as HTMLButtonElement
+    nameSubmitButton.onclick = nameSubmit
+}
 
-let nameSubmitButton = getNodeId('nameSubmitButton') as HTMLButtonElement
-nameSubmitButton.onclick = nameSubmit
-
-let nameInput = getNodeId('nameInput') as HTMLInputElement
-nameInput.onkeypress = (keyboardEvent) => {
-    if (keyboardEvent.key === 'Enter') {
-        nameSubmit()
+{
+    let nameInput = getNodeId('nameInput') as HTMLInputElement
+    nameInput.onkeypress = (keyboardEvent) => {
+        if (keyboardEvent.key === 'Enter') {
+            nameSubmit()
+        }
     }
 }
 
-let voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
-voteCountInput.oninput = disablePart1SubmitIfInvalid
+{
+    let voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
+    voteCountInput.oninput = disablePart1SubmitIfInvalid
+}
 
-let currentNameIndex = 0
+let gVoteList: number[] = []
+let gVotesLeft = 0
+
+let gCurrentNameIndex = 0
 
 let part1Submit = getNodeId('part1Submit') as HTMLButtonElement
 part1Submit.onclick = () => {
     if (!checkPart1Validity()) return
 
-    let part1 = getNodeId('part1')!
-    let part2 = getNodeId('part2')!
+    let part1 = getNodeId('part1') as HTMLSpanElement
+    let part2 = getNodeId('part2') as HTMLSpanElement
     part1.hidden = true
     part2.hidden = false
 
@@ -87,7 +95,7 @@ part1Submit.onclick = () => {
 
     // setting up part 2
     let currentName = getNodeId('currentName') as HTMLHeadingElement
-    currentName.textContent = nameList.children[currentNameIndex].textContent
+    currentName.textContent = nameList.children[gCurrentNameIndex].textContent
     for (let i = 0; i < movieList.children.length; ++i) {
         let movie = movieList.children[i]
         let checkbox = document.createElement('input')
@@ -98,8 +106,8 @@ part1Submit.onclick = () => {
             let checkboxes = document.getElementsByClassName(checkbox.className) as HTMLCollectionOf<HTMLInputElement>
             let target = event.target as HTMLInputElement
             if (target.checked) {
-                --votesLeft
-                if (votesLeft === 0) {
+                --gVotesLeft
+                if (gVotesLeft === 0) {
                     for (let checkbox of checkboxes) {
                         if (!checkbox.checked) {
                             checkbox.disabled = true
@@ -108,13 +116,13 @@ part1Submit.onclick = () => {
                     part2Submit.disabled = false
                 }
             } else {
-                if (votesLeft === 0) {
+                if (gVotesLeft === 0) {
                     for (let checkbox of checkboxes) {
                         checkbox.disabled = false
                     }
                     part2Submit.disabled = true
                 }
-                ++votesLeft
+                ++gVotesLeft
             }
         }
         let label = document.createElement('label')
@@ -127,26 +135,26 @@ part1Submit.onclick = () => {
         checkboxList.appendChild(li)
     }
 
-    voteList = new Array(movieList.children.length)
-    voteList.fill(0)
+    gVoteList = new Array(movieList.children.length)
+    gVoteList.fill(0)
     let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-    votesLeft = +voteCountInput.value
+    gVotesLeft = +voteCountInput.value
 }
 
 // part2
 let part2Submit = getNodeId('part2Submit') as HTMLButtonElement
 part2Submit.onclick = () => {
-    if (votesLeft) { console.log('there are votes left'); return }
+    if (gVotesLeft) { console.log('there are votes left'); return }
     let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-    votesLeft = +voteCountInput.value
+    gVotesLeft = +voteCountInput.value
 
-    ++currentNameIndex
+    ++gCurrentNameIndex
 
     let checkboxes = document.getElementsByClassName('checkboxes') as HTMLCollectionOf<HTMLInputElement>
     for (let i = 0; i < checkboxes.length; ++i) {
         let checkbox = checkboxes[i]
         if (checkbox.checked) {
-            ++voteList[i]
+            ++gVoteList[i]
         }
         checkbox.checked = false
         checkbox.disabled = false
@@ -154,22 +162,22 @@ part2Submit.onclick = () => {
     part2Submit.disabled = true
 
     let nameList = getNodeId('nameList') as HTMLUListElement
-    if (currentNameIndex < nameList.children.length) {
+    if (gCurrentNameIndex < nameList.children.length) {
         let currentName = getNodeId('currentName') as HTMLHeadingElement
-        currentName.textContent = nameList.children[currentNameIndex].textContent
+        currentName.textContent = nameList.children[gCurrentNameIndex].textContent
     } else {
         // set up part 3
-        let part2 = getNodeId('part2')!
-        let part3 = getNodeId('part3')!
+        let part2 = getNodeId('part2') as HTMLSpanElement
+        let part3 = getNodeId('part3') as HTMLSpanElement
         part2.hidden = true
         part3.hidden = false
 
         // sort results
-        let sortedIndexList = new Array(voteList.length)
+        let sortedIndexList = new Array(gVoteList.length)
         for (let i = 0; i < sortedIndexList.length; ++i) {
             sortedIndexList[i] = i
         }
-        sortedIndexList.sort((a, b) => voteList[b] - voteList[a])
+        sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a])
 
         // show results
         let movieList = getNodeId('movieList') as HTMLUListElement
@@ -177,7 +185,7 @@ part2Submit.onclick = () => {
             let movieTd = document.createElement('td')
             movieTd.textContent = movieList.children[i].textContent
             let voteTd = document.createElement('td')
-            voteTd.textContent = String(voteList[i])
+            voteTd.textContent = String(gVoteList[i])
             let tr = document.createElement('tr')
             tr.appendChild(movieTd)
             tr.appendChild(voteTd)

@@ -44,21 +44,29 @@ function nameSubmit() {
     nameInput.value = '';
     disablePart1SubmitIfInvalid();
 }
-let voteList = [];
-let votesLeft = 0;
-let movieSubmitButton = getNodeId('movieSubmitButton');
-movieSubmitButton.onclick = movieSubmit;
-let nameSubmitButton = getNodeId('nameSubmitButton');
-nameSubmitButton.onclick = nameSubmit;
-let nameInput = getNodeId('nameInput');
-nameInput.onkeypress = (keyboardEvent) => {
-    if (keyboardEvent.key === 'Enter') {
-        nameSubmit();
-    }
-};
-let voteCountInput = document.getElementById('voteCountInput');
-voteCountInput.oninput = disablePart1SubmitIfInvalid;
-let currentNameIndex = 0;
+{
+    let movieSubmitButton = getNodeId('movieSubmitButton');
+    movieSubmitButton.onclick = movieSubmit;
+}
+{
+    let nameSubmitButton = getNodeId('nameSubmitButton');
+    nameSubmitButton.onclick = nameSubmit;
+}
+{
+    let nameInput = getNodeId('nameInput');
+    nameInput.onkeypress = (keyboardEvent) => {
+        if (keyboardEvent.key === 'Enter') {
+            nameSubmit();
+        }
+    };
+}
+{
+    let voteCountInput = document.getElementById('voteCountInput');
+    voteCountInput.oninput = disablePart1SubmitIfInvalid;
+}
+let gVoteList = [];
+let gVotesLeft = 0;
+let gCurrentNameIndex = 0;
 let part1Submit = getNodeId('part1Submit');
 part1Submit.onclick = () => {
     if (!checkPart1Validity())
@@ -71,7 +79,7 @@ part1Submit.onclick = () => {
     let nameList = getNodeId('nameList');
     // setting up part 2
     let currentName = getNodeId('currentName');
-    currentName.textContent = nameList.children[currentNameIndex].textContent;
+    currentName.textContent = nameList.children[gCurrentNameIndex].textContent;
     for (let i = 0; i < movieList.children.length; ++i) {
         let movie = movieList.children[i];
         let checkbox = document.createElement('input');
@@ -82,8 +90,8 @@ part1Submit.onclick = () => {
             let checkboxes = document.getElementsByClassName(checkbox.className);
             let target = event.target;
             if (target.checked) {
-                --votesLeft;
-                if (votesLeft === 0) {
+                --gVotesLeft;
+                if (gVotesLeft === 0) {
                     for (let checkbox of checkboxes) {
                         if (!checkbox.checked) {
                             checkbox.disabled = true;
@@ -93,13 +101,13 @@ part1Submit.onclick = () => {
                 }
             }
             else {
-                if (votesLeft === 0) {
+                if (gVotesLeft === 0) {
                     for (let checkbox of checkboxes) {
                         checkbox.disabled = false;
                     }
                     part2Submit.disabled = true;
                 }
-                ++votesLeft;
+                ++gVotesLeft;
             }
         };
         let label = document.createElement('label');
@@ -111,35 +119,35 @@ part1Submit.onclick = () => {
         let checkboxList = getNodeId('checkboxList');
         checkboxList.appendChild(li);
     }
-    voteList = new Array(movieList.children.length);
-    voteList.fill(0);
+    gVoteList = new Array(movieList.children.length);
+    gVoteList.fill(0);
     let voteCountInput = getNodeId('voteCountInput');
-    votesLeft = +voteCountInput.value;
+    gVotesLeft = +voteCountInput.value;
 };
 // part2
 let part2Submit = getNodeId('part2Submit');
 part2Submit.onclick = () => {
-    if (votesLeft) {
+    if (gVotesLeft) {
         console.log('there are votes left');
         return;
     }
     let voteCountInput = getNodeId('voteCountInput');
-    votesLeft = +voteCountInput.value;
-    ++currentNameIndex;
+    gVotesLeft = +voteCountInput.value;
+    ++gCurrentNameIndex;
     let checkboxes = document.getElementsByClassName('checkboxes');
     for (let i = 0; i < checkboxes.length; ++i) {
         let checkbox = checkboxes[i];
         if (checkbox.checked) {
-            ++voteList[i];
+            ++gVoteList[i];
         }
         checkbox.checked = false;
         checkbox.disabled = false;
     }
     part2Submit.disabled = true;
     let nameList = getNodeId('nameList');
-    if (currentNameIndex < nameList.children.length) {
+    if (gCurrentNameIndex < nameList.children.length) {
         let currentName = getNodeId('currentName');
-        currentName.textContent = nameList.children[currentNameIndex].textContent;
+        currentName.textContent = nameList.children[gCurrentNameIndex].textContent;
     }
     else {
         // set up part 3
@@ -148,18 +156,18 @@ part2Submit.onclick = () => {
         part2.hidden = true;
         part3.hidden = false;
         // sort results
-        let sortedIndexList = new Array(voteList.length);
+        let sortedIndexList = new Array(gVoteList.length);
         for (let i = 0; i < sortedIndexList.length; ++i) {
             sortedIndexList[i] = i;
         }
-        sortedIndexList.sort((a, b) => voteList[b] - voteList[a]);
+        sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a]);
         // show results
         let movieList = getNodeId('movieList');
         for (let i of sortedIndexList) {
             let movieTd = document.createElement('td');
             movieTd.textContent = movieList.children[i].textContent;
             let voteTd = document.createElement('td');
-            voteTd.textContent = String(voteList[i]);
+            voteTd.textContent = String(gVoteList[i]);
             let tr = document.createElement('tr');
             tr.appendChild(movieTd);
             tr.appendChild(voteTd);
