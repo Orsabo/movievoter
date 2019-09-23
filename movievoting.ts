@@ -129,7 +129,7 @@ part1Submit.onclick = () => {
 
     // setting up part 2
     const currentName = getNodeId('currentName') as HTMLHeadingElement
-    currentName.textContent = nameList.children[gCurrentNameIndex].textContent
+    currentName.textContent = nameList.children[gCurrentNameIndex].childNodes[1].textContent
 
     const checkboxList = getNodeId('checkboxList') as HTMLUListElement
     while (checkboxList.firstChild) {
@@ -137,7 +137,6 @@ part1Submit.onclick = () => {
     }
 
     for (let i = 0; i < movieList.children.length; ++i) {
-        const movie = movieList.children[i]
         const checkbox = document.createElement('input')
         checkbox.type = 'checkbox'
         checkbox.id = 'checkbox' + i
@@ -165,8 +164,10 @@ part1Submit.onclick = () => {
                 ++gVotesLeft
             }
         }
+
         const label = document.createElement('label')
-        label.textContent = movie.textContent
+        const movieName = movieList.children[i].childNodes[1].textContent
+        label.textContent = movieName
         label.htmlFor = checkbox.id
         const li = document.createElement('li')
         li.appendChild(checkbox)
@@ -203,7 +204,7 @@ part2Submit.onclick = () => {
     const nameList = getNodeId('nameList') as HTMLUListElement
     if (gCurrentNameIndex < nameList.children.length) {
         const currentName = getNodeId('currentName') as HTMLHeadingElement
-        currentName.textContent = nameList.children[gCurrentNameIndex].textContent
+        currentName.textContent = nameList.children[gCurrentNameIndex].childNodes[1].textContent
     } else {
         gCurrentNameIndex = 0
 
@@ -231,7 +232,7 @@ part2Submit.onclick = () => {
 
         for (const i of sortedIndexList)  {
             const movieTd = document.createElement('td')
-            movieTd.textContent = movieList.children[i].textContent
+            movieTd.textContent = movieList.children[i].childNodes[1].textContent
 
             const voteTd = document.createElement('td')
             voteTd.textContent = String(gVoteList[i])
