@@ -3,42 +3,42 @@ function getNodeId(name) {
     return document.getElementById(name);
 }
 function checkPart1Validity() {
-    let movieList = getNodeId('movieList');
-    let nameList = getNodeId('nameList');
-    let voteCountInput = getNodeId('voteCountInput');
+    const movieList = getNodeId('movieList');
+    const nameList = getNodeId('nameList');
+    const voteCountInput = getNodeId('voteCountInput');
     return nameList.children.length >= 2 && movieList.children.length >= 2 && voteCountInput.checkValidity();
 }
 function disablePart1SubmitIfInvalid() {
-    let part1Submit = getNodeId('part1Submit');
+    const part1Submit = getNodeId('part1Submit');
     part1Submit.disabled = !checkPart1Validity();
 }
 function updateVoteCountInput() {
-    let voteCountInput = getNodeId('voteCountInput');
-    let movieList = getNodeId('movieList');
-    let movieCount = movieList.children.length;
+    const voteCountInput = getNodeId('voteCountInput');
+    const movieList = getNodeId('movieList');
+    const movieCount = movieList.children.length;
     voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1);
     if (+voteCountInput.value > +voteCountInput.max) {
         voteCountInput.value = voteCountInput.max;
     }
 }
 function deleteFromList(event) {
-    let target = event.target;
-    let element = target.parentElement;
+    const target = event.target;
+    const element = target.parentElement;
     if (!element) {
         console.log('element is null aaaaa');
     }
-    let list = element.parentElement;
+    const list = element.parentElement;
     if (!list) {
         console.log('list is null aaaaa');
     }
     list.removeChild(element);
 }
 function addElementsToList(list, ...args) {
-    let li = document.createElement('li');
-    for (let arg of args) {
+    const li = document.createElement('li');
+    for (const arg of args) {
         let foo;
         if (typeof arg == 'string') {
-            let str = arg.trim();
+            const str = arg.trim();
             if (!str.length)
                 return;
             foo = document.createTextNode(str);
@@ -51,10 +51,10 @@ function addElementsToList(list, ...args) {
     list.appendChild(li);
 }
 function movieSubmit() {
-    let movieTextArea = getNodeId('movieTextArea');
-    let movieList = document.getElementById('movieList');
-    for (let movieName of movieTextArea.value.trim().split('\n')) {
-        let deleteButton = document.createElement('button');
+    const movieTextArea = getNodeId('movieTextArea');
+    const movieList = document.getElementById('movieList');
+    for (const movieName of movieTextArea.value.trim().split('\n')) {
+        const deleteButton = document.createElement('button');
         deleteButton.textContent = 'X';
         deleteButton.onclick = deleteFromList;
         addElementsToList(movieList, deleteButton, movieName);
@@ -65,9 +65,9 @@ function movieSubmit() {
     disablePart1SubmitIfInvalid();
 }
 function nameSubmit() {
-    let nameList = getNodeId('nameList');
-    let nameInput = getNodeId('nameInput');
-    let deleteButton = document.createElement('button');
+    const nameList = getNodeId('nameList');
+    const nameInput = getNodeId('nameInput');
+    const deleteButton = document.createElement('button');
     deleteButton.textContent = 'X';
     deleteButton.onclick = deleteFromList;
     addElementsToList(nameList, deleteButton, nameInput.value);
@@ -75,15 +75,15 @@ function nameSubmit() {
     disablePart1SubmitIfInvalid();
 }
 {
-    let movieSubmitButton = getNodeId('movieSubmitButton');
+    const movieSubmitButton = getNodeId('movieSubmitButton');
     movieSubmitButton.onclick = movieSubmit;
 }
 {
-    let nameSubmitButton = getNodeId('nameSubmitButton');
+    const nameSubmitButton = getNodeId('nameSubmitButton');
     nameSubmitButton.onclick = nameSubmit;
 }
 {
-    let nameInput = getNodeId('nameInput');
+    const nameInput = getNodeId('nameInput');
     nameInput.onkeypress = (keyboardEvent) => {
         if (keyboardEvent.key === 'Enter') {
             nameSubmit();
@@ -91,42 +91,42 @@ function nameSubmit() {
     };
 }
 {
-    let voteCountInput = document.getElementById('voteCountInput');
+    const voteCountInput = document.getElementById('voteCountInput');
     voteCountInput.oninput = disablePart1SubmitIfInvalid;
 }
 let gVoteList = [];
 let gVotesLeft = 0;
 let gCurrentNameIndex = 0;
-let part1Submit = getNodeId('part1Submit');
+const part1Submit = getNodeId('part1Submit');
 part1Submit.onclick = () => {
     if (!checkPart1Validity())
         return;
-    let part1 = getNodeId('part1');
-    let part2 = getNodeId('part2');
+    const part1 = getNodeId('part1');
+    const part2 = getNodeId('part2');
     part1.hidden = true;
     part2.hidden = false;
-    let movieList = getNodeId('movieList');
-    let nameList = getNodeId('nameList');
+    const movieList = getNodeId('movieList');
+    const nameList = getNodeId('nameList');
     // setting up part 2
-    let currentName = getNodeId('currentName');
+    const currentName = getNodeId('currentName');
     currentName.textContent = nameList.children[gCurrentNameIndex].textContent;
-    let checkboxList = getNodeId('checkboxList');
+    const checkboxList = getNodeId('checkboxList');
     while (checkboxList.firstChild) {
         checkboxList.removeChild(checkboxList.firstChild);
     }
     for (let i = 0; i < movieList.children.length; ++i) {
-        let movie = movieList.children[i];
-        let checkbox = document.createElement('input');
+        const movie = movieList.children[i];
+        const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = 'checkbox' + i;
         checkbox.className = 'checkboxes';
         checkbox.onchange = (event) => {
-            let checkboxes = document.getElementsByClassName(checkbox.className);
-            let target = event.target;
+            const checkboxes = document.getElementsByClassName(checkbox.className);
+            const target = event.target;
             if (target.checked) {
                 --gVotesLeft;
                 if (gVotesLeft === 0) {
-                    for (let checkbox of checkboxes) {
+                    for (const checkbox of checkboxes) {
                         if (!checkbox.checked) {
                             checkbox.disabled = true;
                         }
@@ -136,7 +136,7 @@ part1Submit.onclick = () => {
             }
             else {
                 if (gVotesLeft === 0) {
-                    for (let checkbox of checkboxes) {
+                    for (const checkbox of checkboxes) {
                         checkbox.disabled = false;
                     }
                     part2Submit.disabled = true;
@@ -144,32 +144,32 @@ part1Submit.onclick = () => {
                 ++gVotesLeft;
             }
         };
-        let label = document.createElement('label');
+        const label = document.createElement('label');
         label.textContent = movie.textContent;
         label.htmlFor = checkbox.id;
-        let li = document.createElement('li');
+        const li = document.createElement('li');
         li.appendChild(checkbox);
         li.appendChild(label);
         checkboxList.appendChild(li);
     }
     gVoteList = new Array(movieList.children.length);
     gVoteList.fill(0);
-    let voteCountInput = getNodeId('voteCountInput');
+    const voteCountInput = getNodeId('voteCountInput');
     gVotesLeft = +voteCountInput.value;
 };
 // part2
-let part2Submit = getNodeId('part2Submit');
+const part2Submit = getNodeId('part2Submit');
 part2Submit.onclick = () => {
     if (gVotesLeft) {
         console.log('there are votes left');
         return;
     }
-    let voteCountInput = getNodeId('voteCountInput');
+    const voteCountInput = getNodeId('voteCountInput');
     gVotesLeft = +voteCountInput.value;
     ++gCurrentNameIndex;
-    let checkboxes = document.getElementsByClassName('checkboxes');
+    const checkboxes = document.getElementsByClassName('checkboxes');
     for (let i = 0; i < checkboxes.length; ++i) {
-        let checkbox = checkboxes[i];
+        const checkbox = checkboxes[i];
         if (checkbox.checked) {
             ++gVoteList[i];
         }
@@ -177,59 +177,59 @@ part2Submit.onclick = () => {
         checkbox.disabled = false;
     }
     part2Submit.disabled = true;
-    let nameList = getNodeId('nameList');
+    const nameList = getNodeId('nameList');
     if (gCurrentNameIndex < nameList.children.length) {
-        let currentName = getNodeId('currentName');
+        const currentName = getNodeId('currentName');
         currentName.textContent = nameList.children[gCurrentNameIndex].textContent;
     }
     else {
         gCurrentNameIndex = 0;
         // set up part 3
-        let part2 = getNodeId('part2');
-        let part3 = getNodeId('part3');
+        const part2 = getNodeId('part2');
+        const part3 = getNodeId('part3');
         part2.hidden = true;
         part3.hidden = false;
         // sort results
-        let sortedIndexList = new Array(gVoteList.length);
+        const sortedIndexList = new Array(gVoteList.length);
         for (let i = 0; i < sortedIndexList.length; ++i) {
             sortedIndexList[i] = i;
         }
         sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a]);
         // show results
-        let movieList = getNodeId('movieList');
-        let tableBody = document.getElementById('resultTableBody');
+        const movieList = getNodeId('movieList');
+        const tableBody = document.getElementById('resultTableBody');
         // clear results table body before adding to it
         while (tableBody.firstChild) {
             tableBody.removeChild(tableBody.firstChild);
         }
-        for (let i of sortedIndexList) {
-            let movieTd = document.createElement('td');
+        for (const i of sortedIndexList) {
+            const movieTd = document.createElement('td');
             movieTd.textContent = movieList.children[i].textContent;
-            let voteTd = document.createElement('td');
+            const voteTd = document.createElement('td');
             voteTd.textContent = String(gVoteList[i]);
-            let checkbox = document.createElement('input');
+            const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            let tr = document.createElement('tr');
+            const tr = document.createElement('tr');
             tr.appendChild(checkbox);
             tr.appendChild(movieTd);
             tr.appendChild(voteTd);
             tableBody.appendChild(tr);
         }
-        let restartButton = document.getElementById('restartButton');
+        const restartButton = document.getElementById('restartButton');
         restartButton.onclick = () => {
-            let part1 = getNodeId('part1');
-            let part3 = getNodeId('part3');
+            const part1 = getNodeId('part1');
+            const part3 = getNodeId('part3');
             part1.hidden = false;
             part3.hidden = true;
             // clear movieList before re-adding the movies that are checked
             while (movieList.firstChild) {
                 movieList.removeChild(movieList.firstChild);
             }
-            for (let row of tableBody.children) {
-                let checkbox = row.children[0];
-                let movieName = row.children[1].textContent;
+            for (const row of tableBody.children) {
+                const checkbox = row.children[0];
+                const movieName = row.children[1].textContent;
                 if (checkbox.checked) {
-                    let deleteButton = document.createElement('button');
+                    const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'X';
                     deleteButton.onclick = deleteFromList;
                     addElementsToList(movieList, deleteButton, movieName);

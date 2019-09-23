@@ -3,21 +3,21 @@ function getNodeId(name: string) {
 }
 
 function checkPart1Validity() {
-    let movieList = getNodeId('movieList') as HTMLUListElement
-    let nameList = getNodeId('nameList') as HTMLUListElement
-    let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
+    const movieList = getNodeId('movieList') as HTMLUListElement
+    const nameList = getNodeId('nameList') as HTMLUListElement
+    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
     return nameList.children.length >= 2 && movieList.children.length >= 2 && voteCountInput.checkValidity()
 }
 
 function disablePart1SubmitIfInvalid() {
-    let part1Submit = getNodeId('part1Submit') as HTMLButtonElement
+    const part1Submit = getNodeId('part1Submit') as HTMLButtonElement
     part1Submit.disabled = !checkPart1Validity()
 }
 
 function updateVoteCountInput() {
-    let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-    let movieList = getNodeId('movieList') as HTMLUListElement
-    let movieCount = movieList.children.length
+    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
+    const movieList = getNodeId('movieList') as HTMLUListElement
+    const movieCount = movieList.children.length
 
     voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1)
     if (+voteCountInput.value > +voteCountInput.max) {
@@ -26,12 +26,12 @@ function updateVoteCountInput() {
 }
 
 function deleteFromList(event: MouseEvent) {
-    let target = event.target as HTMLButtonElement
-    let element = target.parentElement
+    const target = event.target as HTMLButtonElement
+    const element = target.parentElement
     if (!element) {
         console.log('element is null aaaaa')
     }
-    let list = element!.parentElement
+    const list = element!.parentElement
     if (!list) {
         console.log('list is null aaaaa')
     }
@@ -41,11 +41,11 @@ function deleteFromList(event: MouseEvent) {
 type StringOrHTMLElement = string | HTMLElement
 
 function addElementsToList(list: HTMLUListElement, ...args: StringOrHTMLElement[]) {
-    let li = document.createElement('li')
-    for (let arg of args) {
+    const li = document.createElement('li')
+    for (const arg of args) {
         let foo
         if (typeof arg == 'string') {
-            let str = arg.trim()
+            const str = arg.trim()
             if (!str.length) return
             foo = document.createTextNode(str)
         } else {
@@ -57,11 +57,11 @@ function addElementsToList(list: HTMLUListElement, ...args: StringOrHTMLElement[
 }
 
 function movieSubmit() {
-    let movieTextArea = getNodeId('movieTextArea') as HTMLTextAreaElement
-    let movieList = document.getElementById('movieList') as HTMLUListElement
+    const movieTextArea = getNodeId('movieTextArea') as HTMLTextAreaElement
+    const movieList = document.getElementById('movieList') as HTMLUListElement
 
-    for (let movieName of movieTextArea.value.trim().split('\n')) {
-        let deleteButton = document.createElement('button')
+    for (const movieName of movieTextArea.value.trim().split('\n')) {
+        const deleteButton = document.createElement('button')
         deleteButton.textContent = 'X'
         deleteButton.onclick = deleteFromList
         addElementsToList(movieList, deleteButton, movieName)
@@ -74,10 +74,10 @@ function movieSubmit() {
 }
 
 function nameSubmit() {
-    let nameList = getNodeId('nameList') as HTMLUListElement
-    let nameInput = getNodeId('nameInput') as HTMLInputElement
+    const nameList = getNodeId('nameList') as HTMLUListElement
+    const nameInput = getNodeId('nameInput') as HTMLInputElement
 
-    let deleteButton = document.createElement('button')
+    const deleteButton = document.createElement('button')
     deleteButton.textContent = 'X'
     deleteButton.onclick = deleteFromList
     addElementsToList(nameList, deleteButton, nameInput.value)
@@ -87,17 +87,17 @@ function nameSubmit() {
 }
 
 {
-    let movieSubmitButton = getNodeId('movieSubmitButton') as HTMLButtonElement
+    const movieSubmitButton = getNodeId('movieSubmitButton') as HTMLButtonElement
     movieSubmitButton.onclick = movieSubmit
 }
 
 {
-    let nameSubmitButton = getNodeId('nameSubmitButton') as HTMLButtonElement
+    const nameSubmitButton = getNodeId('nameSubmitButton') as HTMLButtonElement
     nameSubmitButton.onclick = nameSubmit
 }
 
 {
-    let nameInput = getNodeId('nameInput') as HTMLInputElement
+    const nameInput = getNodeId('nameInput') as HTMLInputElement
     nameInput.onkeypress = (keyboardEvent) => {
         if (keyboardEvent.key === 'Enter') {
             nameSubmit()
@@ -106,7 +106,7 @@ function nameSubmit() {
 }
 
 {
-    let voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
+    const voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
     voteCountInput.oninput = disablePart1SubmitIfInvalid
 }
 
@@ -115,40 +115,40 @@ let gVotesLeft = 0
 
 let gCurrentNameIndex = 0
 
-let part1Submit = getNodeId('part1Submit') as HTMLButtonElement
+const part1Submit = getNodeId('part1Submit') as HTMLButtonElement
 part1Submit.onclick = () => {
     if (!checkPart1Validity()) return
 
-    let part1 = getNodeId('part1') as HTMLSpanElement
-    let part2 = getNodeId('part2') as HTMLSpanElement
+    const part1 = getNodeId('part1') as HTMLSpanElement
+    const part2 = getNodeId('part2') as HTMLSpanElement
     part1.hidden = true
     part2.hidden = false
 
-    let movieList = getNodeId('movieList') as HTMLUListElement
-    let nameList = getNodeId('nameList') as HTMLUListElement
+    const movieList = getNodeId('movieList') as HTMLUListElement
+    const nameList = getNodeId('nameList') as HTMLUListElement
 
     // setting up part 2
-    let currentName = getNodeId('currentName') as HTMLHeadingElement
+    const currentName = getNodeId('currentName') as HTMLHeadingElement
     currentName.textContent = nameList.children[gCurrentNameIndex].textContent
 
-    let checkboxList = getNodeId('checkboxList') as HTMLUListElement
+    const checkboxList = getNodeId('checkboxList') as HTMLUListElement
     while (checkboxList.firstChild) {
         checkboxList.removeChild(checkboxList.firstChild)
     }
 
     for (let i = 0; i < movieList.children.length; ++i) {
-        let movie = movieList.children[i]
-        let checkbox = document.createElement('input')
+        const movie = movieList.children[i]
+        const checkbox = document.createElement('input')
         checkbox.type = 'checkbox'
         checkbox.id = 'checkbox' + i
         checkbox.className = 'checkboxes'
         checkbox.onchange = (event) => {
-            let checkboxes = document.getElementsByClassName(checkbox.className) as HTMLCollectionOf<HTMLInputElement>
-            let target = event.target as HTMLInputElement
+            const checkboxes = document.getElementsByClassName(checkbox.className) as HTMLCollectionOf<HTMLInputElement>
+            const target = event.target as HTMLInputElement
             if (target.checked) {
                 --gVotesLeft
                 if (gVotesLeft === 0) {
-                    for (let checkbox of checkboxes) {
+                    for (const checkbox of checkboxes) {
                         if (!checkbox.checked) {
                             checkbox.disabled = true
                         }
@@ -157,7 +157,7 @@ part1Submit.onclick = () => {
                 }
             } else {
                 if (gVotesLeft === 0) {
-                    for (let checkbox of checkboxes) {
+                    for (const checkbox of checkboxes) {
                         checkbox.disabled = false
                     }
                     part2Submit.disabled = true
@@ -165,10 +165,10 @@ part1Submit.onclick = () => {
                 ++gVotesLeft
             }
         }
-        let label = document.createElement('label')
+        const label = document.createElement('label')
         label.textContent = movie.textContent
         label.htmlFor = checkbox.id
-        let li = document.createElement('li')
+        const li = document.createElement('li')
         li.appendChild(checkbox)
         li.appendChild(label)
         checkboxList.appendChild(li)
@@ -176,22 +176,22 @@ part1Submit.onclick = () => {
 
     gVoteList = new Array(movieList.children.length)
     gVoteList.fill(0)
-    let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
+    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
     gVotesLeft = +voteCountInput.value
 }
 
 // part2
-let part2Submit = getNodeId('part2Submit') as HTMLButtonElement
+const part2Submit = getNodeId('part2Submit') as HTMLButtonElement
 part2Submit.onclick = () => {
     if (gVotesLeft) { console.log('there are votes left'); return }
-    let voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
+    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
     gVotesLeft = +voteCountInput.value
 
     ++gCurrentNameIndex
 
-    let checkboxes = document.getElementsByClassName('checkboxes') as HTMLCollectionOf<HTMLInputElement>
+    const checkboxes = document.getElementsByClassName('checkboxes') as HTMLCollectionOf<HTMLInputElement>
     for (let i = 0; i < checkboxes.length; ++i) {
-        let checkbox = checkboxes[i]
+        const checkbox = checkboxes[i]
         if (checkbox.checked) {
             ++gVoteList[i]
         }
@@ -200,56 +200,56 @@ part2Submit.onclick = () => {
     }
     part2Submit.disabled = true
 
-    let nameList = getNodeId('nameList') as HTMLUListElement
+    const nameList = getNodeId('nameList') as HTMLUListElement
     if (gCurrentNameIndex < nameList.children.length) {
-        let currentName = getNodeId('currentName') as HTMLHeadingElement
+        const currentName = getNodeId('currentName') as HTMLHeadingElement
         currentName.textContent = nameList.children[gCurrentNameIndex].textContent
     } else {
         gCurrentNameIndex = 0
 
         // set up part 3
-        let part2 = getNodeId('part2') as HTMLSpanElement
-        let part3 = getNodeId('part3') as HTMLSpanElement
+        const part2 = getNodeId('part2') as HTMLSpanElement
+        const part3 = getNodeId('part3') as HTMLSpanElement
         part2.hidden = true
         part3.hidden = false
 
         // sort results
-        let sortedIndexList = new Array(gVoteList.length)
+        const sortedIndexList = new Array(gVoteList.length)
         for (let i = 0; i < sortedIndexList.length; ++i) {
             sortedIndexList[i] = i
         }
         sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a])
 
         // show results
-        let movieList = getNodeId('movieList') as HTMLUListElement
-        let tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
+        const movieList = getNodeId('movieList') as HTMLUListElement
+        const tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
 
         // clear results table body before adding to it
         while (tableBody.firstChild) {
             tableBody.removeChild(tableBody.firstChild)
         }
 
-        for (let i of sortedIndexList)  {
-            let movieTd = document.createElement('td')
+        for (const i of sortedIndexList)  {
+            const movieTd = document.createElement('td')
             movieTd.textContent = movieList.children[i].textContent
 
-            let voteTd = document.createElement('td')
+            const voteTd = document.createElement('td')
             voteTd.textContent = String(gVoteList[i])
 
-            let checkbox = document.createElement('input')
+            const checkbox = document.createElement('input')
             checkbox.type = 'checkbox'
 
-            let tr = document.createElement('tr')
+            const tr = document.createElement('tr')
             tr.appendChild(checkbox)
             tr.appendChild(movieTd)
             tr.appendChild(voteTd)
             tableBody.appendChild(tr)
         }
 
-        let restartButton = document.getElementById('restartButton') as HTMLButtonElement
+        const restartButton = document.getElementById('restartButton') as HTMLButtonElement
         restartButton.onclick = () => {
-            let part1 = getNodeId('part1') as HTMLSpanElement
-            let part3 = getNodeId('part3') as HTMLSpanElement
+            const part1 = getNodeId('part1') as HTMLSpanElement
+            const part3 = getNodeId('part3') as HTMLSpanElement
             part1.hidden = false
             part3.hidden = true
 
@@ -258,11 +258,11 @@ part2Submit.onclick = () => {
                 movieList.removeChild(movieList.firstChild)
             }
 
-            for (let row of tableBody.children) {
-                let checkbox = row.children[0] as HTMLInputElement
-                let movieName = row.children[1].textContent!
+            for (const row of tableBody.children) {
+                const checkbox = row.children[0] as HTMLInputElement
+                const movieName = row.children[1].textContent!
                 if (checkbox.checked) {
-                    let deleteButton = document.createElement('button')
+                    const deleteButton = document.createElement('button')
                     deleteButton.textContent = 'X'
                     deleteButton.onclick = deleteFromList
                     addElementsToList(movieList, deleteButton, movieName)
