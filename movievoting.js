@@ -21,19 +21,43 @@ function updateVoteCountInput() {
         voteCountInput.value = voteCountInput.max;
     }
 }
-function addToList(elementName, list) {
-    elementName = elementName.trim();
-    if (!elementName.length)
-        return;
+function deleteFromList(event) {
+    let target = event.target;
+    let element = target.parentElement;
+    if (!element) {
+        console.log('element is null aaaaa');
+    }
+    let list = element.parentElement;
+    if (!list) {
+        console.log('list is null aaaaa');
+    }
+    list.removeChild(element);
+}
+function addElementsToList(list, ...args) {
     let li = document.createElement('li');
-    li.appendChild(document.createTextNode(elementName));
+    for (let arg of args) {
+        let foo;
+        if (typeof arg == 'string') {
+            let str = arg.trim();
+            if (!str.length)
+                return;
+            foo = document.createTextNode(str);
+        }
+        else {
+            foo = arg;
+        }
+        li.appendChild(foo);
+    }
     list.appendChild(li);
 }
 function movieSubmit() {
     let movieTextArea = getNodeId('movieTextArea');
     let movieList = document.getElementById('movieList');
     for (let movieName of movieTextArea.value.trim().split('\n')) {
-        addToList(movieName, movieList);
+        let deleteButton = document.createElement('button');
+        deleteButton.textContent = 'X';
+        deleteButton.onclick = deleteFromList;
+        addElementsToList(movieList, deleteButton, movieName);
     }
     updateVoteCountInput();
     movieTextArea.value = '';
@@ -43,7 +67,10 @@ function movieSubmit() {
 function nameSubmit() {
     let nameList = getNodeId('nameList');
     let nameInput = getNodeId('nameInput');
-    addToList(nameInput.value, nameList);
+    let deleteButton = document.createElement('button');
+    deleteButton.textContent = 'X';
+    deleteButton.onclick = deleteFromList;
+    addElementsToList(nameList, deleteButton, nameInput.value);
     nameInput.value = '';
     disablePart1SubmitIfInvalid();
 }
@@ -202,7 +229,10 @@ part2Submit.onclick = () => {
                 let checkbox = row.children[0];
                 let movieName = row.children[1].textContent;
                 if (checkbox.checked) {
-                    addToList(movieName, movieList);
+                    let deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'X';
+                    deleteButton.onclick = deleteFromList;
+                    addElementsToList(movieList, deleteButton, movieName);
                 }
             }
             updateVoteCountInput();

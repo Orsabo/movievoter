@@ -25,12 +25,34 @@ function updateVoteCountInput() {
     }
 }
 
-function addToList(elementName: string, list: HTMLUListElement) {
-    elementName = elementName.trim()
-    if (!elementName.length) return
+function deleteFromList(event: MouseEvent) {
+    let target = event.target as HTMLButtonElement
+    let element = target.parentElement
+    if (!element) {
+        console.log('element is null aaaaa')
+    }
+    let list = element!.parentElement
+    if (!list) {
+        console.log('list is null aaaaa')
+    }
+    list!.removeChild(element!)
+}
 
+type StringOrHTMLElement = string | HTMLElement
+
+function addElementsToList(list: HTMLUListElement, ...args: StringOrHTMLElement[]) {
     let li = document.createElement('li')
-    li.appendChild(document.createTextNode(elementName))
+    for (let arg of args) {
+        let foo
+        if (typeof arg == 'string') {
+            let str = arg.trim()
+            if (!str.length) return
+            foo = document.createTextNode(str)
+        } else {
+            foo = arg
+        }
+        li.appendChild(foo)
+    }
     list.appendChild(li)
 }
 
@@ -39,7 +61,10 @@ function movieSubmit() {
     let movieList = document.getElementById('movieList') as HTMLUListElement
 
     for (let movieName of movieTextArea.value.trim().split('\n')) {
-        addToList(movieName, movieList)
+        let deleteButton = document.createElement('button')
+        deleteButton.textContent = 'X'
+        deleteButton.onclick = deleteFromList
+        addElementsToList(movieList, deleteButton, movieName)
     }
 
     updateVoteCountInput()
@@ -52,7 +77,10 @@ function nameSubmit() {
     let nameList = getNodeId('nameList') as HTMLUListElement
     let nameInput = getNodeId('nameInput') as HTMLInputElement
 
-    addToList(nameInput.value, nameList)
+    let deleteButton = document.createElement('button')
+    deleteButton.textContent = 'X'
+    deleteButton.onclick = deleteFromList
+    addElementsToList(nameList, deleteButton, nameInput.value)
 
     nameInput.value = ''
     disablePart1SubmitIfInvalid()
@@ -234,7 +262,10 @@ part2Submit.onclick = () => {
                 let checkbox = row.children[0] as HTMLInputElement
                 let movieName = row.children[1].textContent!
                 if (checkbox.checked) {
-                    addToList(movieName, movieList)
+                    let deleteButton = document.createElement('button')
+                    deleteButton.textContent = 'X'
+                    deleteButton.onclick = deleteFromList
+                    addElementsToList(movieList, deleteButton, movieName)
                 }
             }
 
