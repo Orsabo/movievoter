@@ -1,7 +1,7 @@
 let gVoteList: number[] = []
 let gVotesLeft = 0
 
-let gCurrentNameIndex = 0
+let gVoterIndex = 0
 
 class Part1 {
     static readonly span = document.getElementById('part1') as HTMLSpanElement
@@ -68,7 +68,7 @@ class Part1 {
         Part2.span.hidden = false
 
         // setting up part 2
-        Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
+        Part2.voterName.textContent = Part1.nameList.children[gVoterIndex].childNodes[1].textContent
 
         while (Part2.checkboxList.firstChild) {
             Part2.checkboxList.removeChild(Part2.checkboxList.firstChild)
@@ -129,7 +129,7 @@ class Part2 {
         if (gVotesLeft) { console.log('there are votes left'); return }
         gVotesLeft = +Part1.voteCountInput.value
 
-        ++gCurrentNameIndex
+        ++gVoterIndex
 
         const checkboxes = document.getElementsByClassName('checkboxes') as HTMLCollectionOf<HTMLInputElement>
             for (let i = 0; i < checkboxes.length; ++i) {
@@ -142,10 +142,10 @@ class Part2 {
             }
         Part2.submitButton.disabled = true
 
-        if (gCurrentNameIndex < Part1.nameList.children.length) {
-            Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
+        if (gVoterIndex < Part1.nameList.children.length) {
+            Part2.voterName.textContent = Part1.nameList.children[gVoterIndex].childNodes[1].textContent
         } else {
-            gCurrentNameIndex = 0
+            gVoterIndex = 0
 
             // set up part 3
             Part2.span.hidden = true
