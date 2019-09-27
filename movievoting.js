@@ -1,5 +1,40 @@
 "use strict";
 class Part1 {
+    static submitIsValid() {
+        return Part1.nameList.children.length >= 2 &&
+            Part1.movieList.children.length >= 2 &&
+            Part1.voteCountInput.checkValidity();
+    }
+    static disableSubmitIfInvalid() {
+        Part1.submitButton.disabled = !Part1.submitIsValid();
+    }
+    static updateVoteCountInput() {
+        const movieCount = Part1.movieList.children.length;
+        Part1.voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1);
+        if (+Part1.voteCountInput.value > +Part1.voteCountInput.max) {
+            Part1.voteCountInput.value = Part1.voteCountInput.max;
+        }
+    }
+    static movieSubmit() {
+        for (const movieName of Part1.movieTextArea.value.trim().split('\n')) {
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'X';
+            deleteButton.onclick = deleteFromList;
+            addElementsToList(Part1.movieList, deleteButton, movieName);
+        }
+        Part1.updateVoteCountInput();
+        Part1.movieTextArea.value = '';
+        Part1.movieTextArea.focus();
+        Part1.disableSubmitIfInvalid();
+    }
+    static nameSubmit() {
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'X';
+        deleteButton.onclick = deleteFromList;
+        addElementsToList(Part1.nameList, deleteButton, Part1.nameInput.value);
+        Part1.nameInput.value = '';
+        Part1.disableSubmitIfInvalid();
+    }
 }
 Part1.span = document.getElementById('part1');
 Part1.movieList = document.getElementById('movieList');
@@ -21,19 +56,6 @@ class Part3 {
 Part3.span = document.getElementById('part3');
 Part3.tableBody = document.getElementById('resultTableBody');
 Part3.restartButton = document.getElementById('restartButton');
-function checkPart1Validity() {
-    return Part1.nameList.children.length >= 2 && Part1.movieList.children.length >= 2 && Part1.voteCountInput.checkValidity();
-}
-function disablePart1SubmitIfInvalid() {
-    Part1.submitButton.disabled = !checkPart1Validity();
-}
-function updateVoteCountInput() {
-    const movieCount = Part1.movieList.children.length;
-    Part1.voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1);
-    if (+Part1.voteCountInput.value > +Part1.voteCountInput.max) {
-        Part1.voteCountInput.value = Part1.voteCountInput.max;
-    }
-}
 function deleteFromList(event) {
     const target = event.target;
     const element = target.parentElement;
@@ -46,7 +68,7 @@ function deleteFromList(event) {
     }
     list.removeChild(element);
     if (list == Part1.movieList) {
-        updateVoteCountInput();
+        Part1.updateVoteCountInput();
     }
 }
 function addElementsToList(list, ...args) {
@@ -66,47 +88,27 @@ function addElementsToList(list, ...args) {
     }
     list.appendChild(li);
 }
-function movieSubmit() {
-    for (const movieName of Part1.movieTextArea.value.trim().split('\n')) {
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'X';
-        deleteButton.onclick = deleteFromList;
-        addElementsToList(Part1.movieList, deleteButton, movieName);
-    }
-    updateVoteCountInput();
-    Part1.movieTextArea.value = '';
-    Part1.movieTextArea.focus();
-    disablePart1SubmitIfInvalid();
-}
-function nameSubmit() {
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'X';
-    deleteButton.onclick = deleteFromList;
-    addElementsToList(Part1.nameList, deleteButton, Part1.nameInput.value);
-    Part1.nameInput.value = '';
-    disablePart1SubmitIfInvalid();
+{
+    Part1.movieSubmitButton.onclick = Part1.movieSubmit;
 }
 {
-    Part1.movieSubmitButton.onclick = movieSubmit;
-}
-{
-    Part1.nameSubmitButton.onclick = nameSubmit;
+    Part1.nameSubmitButton.onclick = Part1.nameSubmit;
 }
 {
     Part1.nameInput.onkeypress = (keyboardEvent) => {
         if (keyboardEvent.key === 'Enter') {
-            nameSubmit();
+            Part1.nameSubmit();
         }
     };
 }
 {
-    Part1.voteCountInput.oninput = disablePart1SubmitIfInvalid;
+    Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid;
 }
 let gVoteList = [];
 let gVotesLeft = 0;
 let gCurrentNameIndex = 0;
 Part1.submitButton.onclick = () => {
-    if (!checkPart1Validity())
+    if (!Part1.submitIsValid())
         return;
     Part1.span.hidden = true;
     Part2.span.hidden = false;
@@ -226,6 +228,6 @@ Part3.restartButton.onclick = () => {
             addElementsToList(Part1.movieList, deleteButton, movieName);
         }
     }
-    updateVoteCountInput();
-    disablePart1SubmitIfInvalid();
+    Part1.updateVoteCountInput();
+    Part1.disableSubmitIfInvalid();
 };
