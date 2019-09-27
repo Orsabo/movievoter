@@ -207,25 +207,25 @@ Part2.submitButton.onclick = () => {
             tr.appendChild(voteTd);
             Part3.tableBody.appendChild(tr);
         }
-        Part3.restartButton.onclick = () => {
-            Part1.span.hidden = false;
-            Part3.span.hidden = true;
-            // clear movieList before re-adding the movies that are checked
-            while (Part1.movieList.firstChild) {
-                Part1.movieList.removeChild(Part1.movieList.firstChild);
-            }
-            for (const row of Part3.tableBody.children) {
-                const checkbox = row.children[0];
-                const movieName = row.children[1].textContent;
-                if (checkbox.checked) {
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'X';
-                    deleteButton.onclick = deleteFromList;
-                    addElementsToList(Part1.movieList, deleteButton, movieName);
-                }
-            }
-            updateVoteCountInput();
-            disablePart1SubmitIfInvalid();
-        };
     }
+};
+Part3.restartButton.onclick = () => {
+    Part1.span.hidden = false;
+    Part3.span.hidden = true;
+    // clear movieList before re-adding the movies that are checked
+    while (Part1.movieList.firstChild) {
+        Part1.movieList.removeChild(Part1.movieList.firstChild);
+    }
+    for (const row of Part3.tableBody.children) {
+        const checkbox = row.children[0];
+        const movieName = row.children[1].textContent;
+        if (checkbox.checked) {
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'X';
+            deleteButton.onclick = deleteFromList;
+            addElementsToList(Part1.movieList, deleteButton, movieName);
+        }
+    }
+    updateVoteCountInput();
+    disablePart1SubmitIfInvalid();
 };
