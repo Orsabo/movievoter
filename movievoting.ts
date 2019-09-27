@@ -106,25 +106,16 @@ function addElementsToList(list: HTMLUListElement, ...args: StringOrHTMLElement[
     list.appendChild(li)
 }
 
-{
-    Part1.movieSubmitButton.onclick = Part1.movieSubmit
-}
+// execution starts here
 
-{
-    Part1.nameSubmitButton.onclick = Part1.nameSubmit
-}
-
-{
-    Part1.nameInput.onkeypress = (keyboardEvent) => {
-        if (keyboardEvent.key === 'Enter') {
-            Part1.nameSubmit()
-        }
+Part1.movieSubmitButton.onclick = Part1.movieSubmit
+Part1.nameSubmitButton.onclick = Part1.nameSubmit
+Part1.nameInput.onkeypress = (keyboardEvent) => {
+    if (keyboardEvent.key === 'Enter') {
+        Part1.nameSubmit()
     }
 }
-
-{
-    Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid
-}
+Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid
 
 let gVoteList: number[] = []
 let gVotesLeft = 0

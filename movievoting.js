@@ -88,22 +88,15 @@ function addElementsToList(list, ...args) {
     }
     list.appendChild(li);
 }
-{
-    Part1.movieSubmitButton.onclick = Part1.movieSubmit;
-}
-{
-    Part1.nameSubmitButton.onclick = Part1.nameSubmit;
-}
-{
-    Part1.nameInput.onkeypress = (keyboardEvent) => {
-        if (keyboardEvent.key === 'Enter') {
-            Part1.nameSubmit();
-        }
-    };
-}
-{
-    Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid;
-}
+// execution starts here
+Part1.movieSubmitButton.onclick = Part1.movieSubmit;
+Part1.nameSubmitButton.onclick = Part1.nameSubmit;
+Part1.nameInput.onkeypress = (keyboardEvent) => {
+    if (keyboardEvent.key === 'Enter') {
+        Part1.nameSubmit();
+    }
+};
+Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid;
 let gVoteList = [];
 let gVotesLeft = 0;
 let gCurrentNameIndex = 0;
