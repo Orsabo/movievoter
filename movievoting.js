@@ -21,9 +21,6 @@ class Part3 {
 Part3.span = document.getElementById('part3');
 Part3.tableBody = document.getElementById('resultTableBody');
 Part3.restartButton = document.getElementById('restartButton');
-function getNodeId(name) {
-    return document.getElementById(name);
-}
 function checkPart1Validity() {
     return Part1.nameList.children.length >= 2 && Part1.movieList.children.length >= 2 && Part1.voteCountInput.checkValidity();
 }

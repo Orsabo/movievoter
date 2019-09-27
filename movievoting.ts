@@ -27,10 +27,6 @@ class Part3 {
     static readonly restartButton = document.getElementById('restartButton') as HTMLButtonElement
 }
 
-function getNodeId(name: string) {
-    return document.getElementById(name)
-}
-
 function checkPart1Validity() {
     return Part1.nameList.children.length >= 2 && Part1.movieList.children.length >= 2 && Part1.voteCountInput.checkValidity()
 }
