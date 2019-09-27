@@ -227,6 +227,7 @@ Part2.submitButton.onclick = () => {
                 }
             }
             updateVoteCountInput();
+            disablePart1SubmitIfInvalid();
         };
     }
 };
