@@ -16,6 +16,11 @@ Part2.span = document.getElementById('part2');
 Part2.voterName = document.getElementById('voterName');
 Part2.checkboxList = document.getElementById('checkboxList');
 Part2.submitButton = document.getElementById('part2Submit');
+class Part3 {
+}
+Part3.span = document.getElementById('part3');
+Part3.tableBody = document.getElementById('resultTableBody');
+Part3.restartButton = document.getElementById('restartButton');
 function getNodeId(name) {
     return document.getElementById(name);
 }
@@ -179,9 +184,8 @@ Part2.submitButton.onclick = () => {
     else {
         gCurrentNameIndex = 0;
         // set up part 3
-        const part3 = getNodeId('part3');
         Part2.span.hidden = true;
-        part3.hidden = false;
+        Part3.span.hidden = false;
         // sort results
         const sortedIndexList = new Array(gVoteList.length);
         for (let i = 0; i < sortedIndexList.length; ++i) {
@@ -189,10 +193,9 @@ Part2.submitButton.onclick = () => {
         }
         sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a]);
         // show results
-        const tableBody = document.getElementById('resultTableBody');
         // clear results table body before adding to it
-        while (tableBody.firstChild) {
-            tableBody.removeChild(tableBody.firstChild);
+        while (Part3.tableBody.firstChild) {
+            Part3.tableBody.removeChild(Part3.tableBody.firstChild);
         }
         for (const i of sortedIndexList) {
             const movieTd = document.createElement('td');
@@ -205,18 +208,16 @@ Part2.submitButton.onclick = () => {
             tr.appendChild(checkbox);
             tr.appendChild(movieTd);
             tr.appendChild(voteTd);
-            tableBody.appendChild(tr);
+            Part3.tableBody.appendChild(tr);
         }
-        const restartButton = document.getElementById('restartButton');
-        restartButton.onclick = () => {
-            const part3 = getNodeId('part3');
+        Part3.restartButton.onclick = () => {
             Part1.span.hidden = false;
-            part3.hidden = true;
+            Part3.span.hidden = true;
             // clear movieList before re-adding the movies that are checked
             while (Part1.movieList.firstChild) {
                 Part1.movieList.removeChild(Part1.movieList.firstChild);
             }
-            for (const row of tableBody.children) {
+            for (const row of Part3.tableBody.children) {
                 const checkbox = row.children[0];
                 const movieName = row.children[1].textContent;
                 if (checkbox.checked) {

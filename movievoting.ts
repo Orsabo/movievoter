@@ -21,6 +21,12 @@ class Part2 {
     static readonly submitButton = document.getElementById('part2Submit') as HTMLButtonElement
 }
 
+class Part3 {
+    static readonly span = document.getElementById('part3') as HTMLSpanElement
+    static readonly tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
+    static readonly restartButton = document.getElementById('restartButton') as HTMLButtonElement
+}
+
 function getNodeId(name: string) {
     return document.getElementById(name)
 }
@@ -207,9 +213,8 @@ Part2.submitButton.onclick = () => {
         gCurrentNameIndex = 0
 
         // set up part 3
-        const part3 = getNodeId('part3') as HTMLSpanElement
         Part2.span.hidden = true
-        part3.hidden = false
+        Part3.span.hidden = false
 
         // sort results
         const sortedIndexList = new Array(gVoteList.length)
@@ -219,11 +224,9 @@ Part2.submitButton.onclick = () => {
         sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a])
 
         // show results
-        const tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
-
         // clear results table body before adding to it
-        while (tableBody.firstChild) {
-            tableBody.removeChild(tableBody.firstChild)
+        while (Part3.tableBody.firstChild) {
+            Part3.tableBody.removeChild(Part3.tableBody.firstChild)
         }
 
         for (const i of sortedIndexList)  {
@@ -240,21 +243,19 @@ Part2.submitButton.onclick = () => {
             tr.appendChild(checkbox)
             tr.appendChild(movieTd)
             tr.appendChild(voteTd)
-            tableBody.appendChild(tr)
+            Part3.tableBody.appendChild(tr)
         }
 
-        const restartButton = document.getElementById('restartButton') as HTMLButtonElement
-        restartButton.onclick = () => {
-            const part3 = getNodeId('part3') as HTMLSpanElement
+        Part3.restartButton.onclick = () => {
             Part1.span.hidden = false
-            part3.hidden = true
+            Part3.span.hidden = true
 
             // clear movieList before re-adding the movies that are checked
             while (Part1.movieList.firstChild) {
                 Part1.movieList.removeChild(Part1.movieList.firstChild)
             }
 
-            for (const row of tableBody.children) {
+            for (const row of Part3.tableBody.children) {
                 const checkbox = row.children[0] as HTMLInputElement
                 const movieName = row.children[1].textContent!
                 if (checkbox.checked) {
