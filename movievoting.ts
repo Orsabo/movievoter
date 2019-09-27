@@ -46,6 +46,10 @@ function deleteFromList(event: MouseEvent) {
         console.log('list is null aaaaa')
     }
     list!.removeChild(element!)
+
+    if (list == Part1.movieList) {
+        updateVoteCountInput()
+    }
 }
 
 type StringOrHTMLElement = string | HTMLElement

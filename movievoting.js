@@ -37,6 +37,9 @@ function deleteFromList(event) {
         console.log('list is null aaaaa');
     }
     list.removeChild(element);
+    if (list == Part1.movieList) {
+        updateVoteCountInput();
+    }
 }
 function addElementsToList(list, ...args) {
     const li = document.createElement('li');
