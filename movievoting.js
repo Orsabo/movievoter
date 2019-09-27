@@ -1,4 +1,7 @@
 "use strict";
+let gVoteList = [];
+let gVotesLeft = 0;
+let gCurrentNameIndex = 0;
 class Part1 {
     static submitIsValid() {
         return Part1.nameList.children.length >= 2 &&
@@ -35,6 +38,58 @@ class Part1 {
         Part1.nameInput.value = '';
         Part1.disableSubmitIfInvalid();
     }
+    static submit() {
+        if (!Part1.submitIsValid())
+            return;
+        Part1.span.hidden = true;
+        Part2.span.hidden = false;
+        // setting up part 2
+        Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent;
+        while (Part2.checkboxList.firstChild) {
+            Part2.checkboxList.removeChild(Part2.checkboxList.firstChild);
+        }
+        for (let i = 0; i < Part1.movieList.children.length; ++i) {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = 'checkbox' + i;
+            checkbox.className = 'checkboxes';
+            checkbox.onchange = (event) => {
+                const checkboxes = document.getElementsByClassName(checkbox.className);
+                const target = event.target;
+                if (target.checked) {
+                    --gVotesLeft;
+                    if (gVotesLeft === 0) {
+                        for (const checkbox of checkboxes) {
+                            if (!checkbox.checked) {
+                                checkbox.disabled = true;
+                            }
+                        }
+                        Part2.submitButton.disabled = false;
+                    }
+                }
+                else {
+                    if (gVotesLeft === 0) {
+                        for (const checkbox of checkboxes) {
+                            checkbox.disabled = false;
+                        }
+                        Part2.submitButton.disabled = true;
+                    }
+                    ++gVotesLeft;
+                }
+            };
+            const label = document.createElement('label');
+            const movieName = Part1.movieList.children[i].childNodes[1].textContent;
+            label.textContent = movieName;
+            label.htmlFor = checkbox.id;
+            const li = document.createElement('li');
+            li.appendChild(checkbox);
+            li.appendChild(label);
+            Part2.checkboxList.appendChild(li);
+        }
+        gVoteList = new Array(Part1.movieList.children.length);
+        gVoteList.fill(0);
+        gVotesLeft = +Part1.voteCountInput.value;
+    }
 }
 Part1.span = document.getElementById('part1');
 Part1.movieList = document.getElementById('movieList');
@@ -46,12 +101,83 @@ Part1.nameSubmitButton = document.getElementById('nameSubmitButton');
 Part1.voteCountInput = document.getElementById('voteCountInput');
 Part1.submitButton = document.getElementById('part1Submit');
 class Part2 {
+    static submit() {
+        if (gVotesLeft) {
+            console.log('there are votes left');
+            return;
+        }
+        gVotesLeft = +Part1.voteCountInput.value;
+        ++gCurrentNameIndex;
+        const checkboxes = document.getElementsByClassName('checkboxes');
+        for (let i = 0; i < checkboxes.length; ++i) {
+            const checkbox = checkboxes[i];
+            if (checkbox.checked) {
+                ++gVoteList[i];
+            }
+            checkbox.checked = false;
+            checkbox.disabled = false;
+        }
+        Part2.submitButton.disabled = true;
+        if (gCurrentNameIndex < Part1.nameList.children.length) {
+            Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent;
+        }
+        else {
+            gCurrentNameIndex = 0;
+            // set up part 3
+            Part2.span.hidden = true;
+            Part3.span.hidden = false;
+            // sort results
+            const sortedIndexList = new Array(gVoteList.length);
+            for (let i = 0; i < sortedIndexList.length; ++i) {
+                sortedIndexList[i] = i;
+            }
+            sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a]);
+            // show results
+            // clear results table body before adding to it
+            while (Part3.tableBody.firstChild) {
+                Part3.tableBody.removeChild(Part3.tableBody.firstChild);
+            }
+            for (const i of sortedIndexList) {
+                const movieTd = document.createElement('td');
+                movieTd.textContent = Part1.movieList.children[i].childNodes[1].textContent;
+                const voteTd = document.createElement('td');
+                voteTd.textContent = String(gVoteList[i]);
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                const tr = document.createElement('tr');
+                tr.appendChild(checkbox);
+                tr.appendChild(movieTd);
+                tr.appendChild(voteTd);
+                Part3.tableBody.appendChild(tr);
+            }
+        }
+    }
 }
 Part2.span = document.getElementById('part2');
 Part2.voterName = document.getElementById('voterName');
 Part2.checkboxList = document.getElementById('checkboxList');
 Part2.submitButton = document.getElementById('part2Submit');
 class Part3 {
+    static restart() {
+        Part1.span.hidden = false;
+        Part3.span.hidden = true;
+        // clear movieList before re-adding the movies that are checked
+        while (Part1.movieList.firstChild) {
+            Part1.movieList.removeChild(Part1.movieList.firstChild);
+        }
+        for (const row of Part3.tableBody.children) {
+            const checkbox = row.children[0];
+            const movieName = row.children[1].textContent;
+            if (checkbox.checked) {
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.onclick = deleteFromList;
+                addElementsToList(Part1.movieList, deleteButton, movieName);
+            }
+        }
+        Part1.updateVoteCountInput();
+        Part1.disableSubmitIfInvalid();
+    }
 }
 Part3.span = document.getElementById('part3');
 Part3.tableBody = document.getElementById('resultTableBody');
@@ -88,7 +214,6 @@ function addElementsToList(list, ...args) {
     }
     list.appendChild(li);
 }
-// execution starts here
 Part1.movieSubmitButton.onclick = Part1.movieSubmit;
 Part1.nameSubmitButton.onclick = Part1.nameSubmit;
 Part1.nameInput.onkeypress = (keyboardEvent) => {
@@ -97,130 +222,6 @@ Part1.nameInput.onkeypress = (keyboardEvent) => {
     }
 };
 Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid;
-let gVoteList = [];
-let gVotesLeft = 0;
-let gCurrentNameIndex = 0;
-Part1.submitButton.onclick = () => {
-    if (!Part1.submitIsValid())
-        return;
-    Part1.span.hidden = true;
-    Part2.span.hidden = false;
-    // setting up part 2
-    Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent;
-    while (Part2.checkboxList.firstChild) {
-        Part2.checkboxList.removeChild(Part2.checkboxList.firstChild);
-    }
-    for (let i = 0; i < Part1.movieList.children.length; ++i) {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = 'checkbox' + i;
-        checkbox.className = 'checkboxes';
-        checkbox.onchange = (event) => {
-            const checkboxes = document.getElementsByClassName(checkbox.className);
-            const target = event.target;
-            if (target.checked) {
-                --gVotesLeft;
-                if (gVotesLeft === 0) {
-                    for (const checkbox of checkboxes) {
-                        if (!checkbox.checked) {
-                            checkbox.disabled = true;
-                        }
-                    }
-                    Part2.submitButton.disabled = false;
-                }
-            }
-            else {
-                if (gVotesLeft === 0) {
-                    for (const checkbox of checkboxes) {
-                        checkbox.disabled = false;
-                    }
-                    Part2.submitButton.disabled = true;
-                }
-                ++gVotesLeft;
-            }
-        };
-        const label = document.createElement('label');
-        const movieName = Part1.movieList.children[i].childNodes[1].textContent;
-        label.textContent = movieName;
-        label.htmlFor = checkbox.id;
-        const li = document.createElement('li');
-        li.appendChild(checkbox);
-        li.appendChild(label);
-        Part2.checkboxList.appendChild(li);
-    }
-    gVoteList = new Array(Part1.movieList.children.length);
-    gVoteList.fill(0);
-    gVotesLeft = +Part1.voteCountInput.value;
-};
-// part2
-Part2.submitButton.onclick = () => {
-    if (gVotesLeft) {
-        console.log('there are votes left');
-        return;
-    }
-    gVotesLeft = +Part1.voteCountInput.value;
-    ++gCurrentNameIndex;
-    const checkboxes = document.getElementsByClassName('checkboxes');
-    for (let i = 0; i < checkboxes.length; ++i) {
-        const checkbox = checkboxes[i];
-        if (checkbox.checked) {
-            ++gVoteList[i];
-        }
-        checkbox.checked = false;
-        checkbox.disabled = false;
-    }
-    Part2.submitButton.disabled = true;
-    if (gCurrentNameIndex < Part1.nameList.children.length) {
-        Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent;
-    }
-    else {
-        gCurrentNameIndex = 0;
-        // set up part 3
-        Part2.span.hidden = true;
-        Part3.span.hidden = false;
-        // sort results
-        const sortedIndexList = new Array(gVoteList.length);
-        for (let i = 0; i < sortedIndexList.length; ++i) {
-            sortedIndexList[i] = i;
-        }
-        sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a]);
-        // show results
-        // clear results table body before adding to it
-        while (Part3.tableBody.firstChild) {
-            Part3.tableBody.removeChild(Part3.tableBody.firstChild);
-        }
-        for (const i of sortedIndexList) {
-            const movieTd = document.createElement('td');
-            movieTd.textContent = Part1.movieList.children[i].childNodes[1].textContent;
-            const voteTd = document.createElement('td');
-            voteTd.textContent = String(gVoteList[i]);
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            const tr = document.createElement('tr');
-            tr.appendChild(checkbox);
-            tr.appendChild(movieTd);
-            tr.appendChild(voteTd);
-            Part3.tableBody.appendChild(tr);
-        }
-    }
-};
-Part3.restartButton.onclick = () => {
-    Part1.span.hidden = false;
-    Part3.span.hidden = true;
-    // clear movieList before re-adding the movies that are checked
-    while (Part1.movieList.firstChild) {
-        Part1.movieList.removeChild(Part1.movieList.firstChild);
-    }
-    for (const row of Part3.tableBody.children) {
-        const checkbox = row.children[0];
-        const movieName = row.children[1].textContent;
-        if (checkbox.checked) {
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'X';
-            deleteButton.onclick = deleteFromList;
-            addElementsToList(Part1.movieList, deleteButton, movieName);
-        }
-    }
-    Part1.updateVoteCountInput();
-    Part1.disableSubmitIfInvalid();
-};
+Part1.submitButton.onclick = Part1.submit;
+Part2.submitButton.onclick = Part2.submit;
+Part3.restartButton.onclick = Part3.restart;
