@@ -14,6 +14,13 @@ class Part1 {
     static readonly submitButton = document.getElementById('part1Submit') as HTMLButtonElement
 }
 
+class Part2 {
+    static readonly span = document.getElementById('part2') as HTMLSpanElement
+    static readonly voterName = document.getElementById('voterName') as HTMLHeadingElement
+    static readonly checkboxList = document.getElementById('checkboxList') as HTMLUListElement
+    static readonly submitButton = document.getElementById('part2Submit') as HTMLButtonElement
+}
+
 function getNodeId(name: string) {
     return document.getElementById(name)
 }
@@ -122,17 +129,14 @@ let gCurrentNameIndex = 0
 Part1.submitButton.onclick = () => {
     if (!checkPart1Validity()) return
 
-    const part2 = getNodeId('part2') as HTMLSpanElement
     Part1.span.hidden = true
-    part2.hidden = false
+    Part2.span.hidden = false
 
     // setting up part 2
-    const currentName = getNodeId('currentName') as HTMLHeadingElement
-    currentName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
+    Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
 
-    const checkboxList = getNodeId('checkboxList') as HTMLUListElement
-    while (checkboxList.firstChild) {
-        checkboxList.removeChild(checkboxList.firstChild)
+    while (Part2.checkboxList.firstChild) {
+        Part2.checkboxList.removeChild(Part2.checkboxList.firstChild)
     }
 
     for (let i = 0; i < Part1.movieList.children.length; ++i) {
@@ -151,14 +155,14 @@ Part1.submitButton.onclick = () => {
                             checkbox.disabled = true
                         }
                     }
-                    part2Submit.disabled = false
+                    Part2.submitButton.disabled = false
                 }
             } else {
                 if (gVotesLeft === 0) {
                     for (const checkbox of checkboxes) {
                         checkbox.disabled = false
                     }
-                    part2Submit.disabled = true
+                    Part2.submitButton.disabled = true
                 }
                 ++gVotesLeft
             }
@@ -171,7 +175,7 @@ Part1.submitButton.onclick = () => {
         const li = document.createElement('li')
         li.appendChild(checkbox)
         li.appendChild(label)
-        checkboxList.appendChild(li)
+        Part2.checkboxList.appendChild(li)
     }
 
     gVoteList = new Array(Part1.movieList.children.length)
@@ -180,8 +184,7 @@ Part1.submitButton.onclick = () => {
 }
 
 // part2
-const part2Submit = getNodeId('part2Submit') as HTMLButtonElement
-part2Submit.onclick = () => {
+Part2.submitButton.onclick = () => {
     if (gVotesLeft) { console.log('there are votes left'); return }
     gVotesLeft = +Part1.voteCountInput.value
 
@@ -196,18 +199,16 @@ part2Submit.onclick = () => {
         checkbox.checked = false
         checkbox.disabled = false
     }
-    part2Submit.disabled = true
+    Part2.submitButton.disabled = true
 
     if (gCurrentNameIndex < Part1.nameList.children.length) {
-        const currentName = getNodeId('currentName') as HTMLHeadingElement
-        currentName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
+        Part2.voterName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
     } else {
         gCurrentNameIndex = 0
 
         // set up part 3
-        const part2 = getNodeId('part2') as HTMLSpanElement
         const part3 = getNodeId('part3') as HTMLSpanElement
-        part2.hidden = true
+        Part2.span.hidden = true
         part3.hidden = false
 
         // sort results
