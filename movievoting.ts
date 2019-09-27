@@ -1,27 +1,37 @@
+class Part1 {
+    static readonly span = document.getElementById('part1') as HTMLSpanElement
+           
+    static readonly movieList = document.getElementById('movieList') as HTMLUListElement
+    static readonly movieTextArea = document.getElementById('movieTextArea') as HTMLTextAreaElement
+    static readonly movieSubmitButton = document.getElementById('movieSubmitButton') as HTMLButtonElement
+           
+    static readonly nameList = document.getElementById('nameList') as HTMLUListElement
+    static readonly nameInput = document.getElementById('nameInput') as HTMLInputElement
+    static readonly nameSubmitButton = document.getElementById('nameSubmitButton') as HTMLButtonElement
+           
+    static readonly voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
+           
+    static readonly submitButton = document.getElementById('part1Submit') as HTMLButtonElement
+}
+
 function getNodeId(name: string) {
     return document.getElementById(name)
 }
 
 function checkPart1Validity() {
-    const movieList = getNodeId('movieList') as HTMLUListElement
-    const nameList = getNodeId('nameList') as HTMLUListElement
-    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-    return nameList.children.length >= 2 && movieList.children.length >= 2 && voteCountInput.checkValidity()
+    return Part1.nameList.children.length >= 2 && Part1.movieList.children.length >= 2 && Part1.voteCountInput.checkValidity()
 }
 
 function disablePart1SubmitIfInvalid() {
-    const part1Submit = getNodeId('part1Submit') as HTMLButtonElement
-    part1Submit.disabled = !checkPart1Validity()
+    Part1.submitButton.disabled = !checkPart1Validity()
 }
 
 function updateVoteCountInput() {
-    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-    const movieList = getNodeId('movieList') as HTMLUListElement
-    const movieCount = movieList.children.length
+    const movieCount = Part1.movieList.children.length
 
-    voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1)
-    if (+voteCountInput.value > +voteCountInput.max) {
-        voteCountInput.value = voteCountInput.max
+    Part1.voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1)
+    if (+Part1.voteCountInput.value > +Part1.voteCountInput.max) {
+        Part1.voteCountInput.value = Part1.voteCountInput.max
     }
 }
 
@@ -57,48 +67,39 @@ function addElementsToList(list: HTMLUListElement, ...args: StringOrHTMLElement[
 }
 
 function movieSubmit() {
-    const movieTextArea = getNodeId('movieTextArea') as HTMLTextAreaElement
-    const movieList = document.getElementById('movieList') as HTMLUListElement
-
-    for (const movieName of movieTextArea.value.trim().split('\n')) {
+    for (const movieName of Part1.movieTextArea.value.trim().split('\n')) {
         const deleteButton = document.createElement('button')
         deleteButton.textContent = 'X'
         deleteButton.onclick = deleteFromList
-        addElementsToList(movieList, deleteButton, movieName)
+        addElementsToList(Part1.movieList, deleteButton, movieName)
     }
 
     updateVoteCountInput()
-    movieTextArea.value = ''
-    movieTextArea.focus()
+    Part1.movieTextArea.value = ''
+    Part1.movieTextArea.focus()
     disablePart1SubmitIfInvalid()
 }
 
 function nameSubmit() {
-    const nameList = getNodeId('nameList') as HTMLUListElement
-    const nameInput = getNodeId('nameInput') as HTMLInputElement
-
     const deleteButton = document.createElement('button')
     deleteButton.textContent = 'X'
     deleteButton.onclick = deleteFromList
-    addElementsToList(nameList, deleteButton, nameInput.value)
+    addElementsToList(Part1.nameList, deleteButton, Part1.nameInput.value)
 
-    nameInput.value = ''
+    Part1.nameInput.value = ''
     disablePart1SubmitIfInvalid()
 }
 
 {
-    const movieSubmitButton = getNodeId('movieSubmitButton') as HTMLButtonElement
-    movieSubmitButton.onclick = movieSubmit
+    Part1.movieSubmitButton.onclick = movieSubmit
 }
 
 {
-    const nameSubmitButton = getNodeId('nameSubmitButton') as HTMLButtonElement
-    nameSubmitButton.onclick = nameSubmit
+    Part1.nameSubmitButton.onclick = nameSubmit
 }
 
 {
-    const nameInput = getNodeId('nameInput') as HTMLInputElement
-    nameInput.onkeypress = (keyboardEvent) => {
+    Part1.nameInput.onkeypress = (keyboardEvent) => {
         if (keyboardEvent.key === 'Enter') {
             nameSubmit()
         }
@@ -106,8 +107,7 @@ function nameSubmit() {
 }
 
 {
-    const voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
-    voteCountInput.oninput = disablePart1SubmitIfInvalid
+    Part1.voteCountInput.oninput = disablePart1SubmitIfInvalid
 }
 
 let gVoteList: number[] = []
@@ -115,28 +115,23 @@ let gVotesLeft = 0
 
 let gCurrentNameIndex = 0
 
-const part1Submit = getNodeId('part1Submit') as HTMLButtonElement
-part1Submit.onclick = () => {
+Part1.submitButton.onclick = () => {
     if (!checkPart1Validity()) return
 
-    const part1 = getNodeId('part1') as HTMLSpanElement
     const part2 = getNodeId('part2') as HTMLSpanElement
-    part1.hidden = true
+    Part1.span.hidden = true
     part2.hidden = false
-
-    const movieList = getNodeId('movieList') as HTMLUListElement
-    const nameList = getNodeId('nameList') as HTMLUListElement
 
     // setting up part 2
     const currentName = getNodeId('currentName') as HTMLHeadingElement
-    currentName.textContent = nameList.children[gCurrentNameIndex].childNodes[1].textContent
+    currentName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
 
     const checkboxList = getNodeId('checkboxList') as HTMLUListElement
     while (checkboxList.firstChild) {
         checkboxList.removeChild(checkboxList.firstChild)
     }
 
-    for (let i = 0; i < movieList.children.length; ++i) {
+    for (let i = 0; i < Part1.movieList.children.length; ++i) {
         const checkbox = document.createElement('input')
         checkbox.type = 'checkbox'
         checkbox.id = 'checkbox' + i
@@ -166,7 +161,7 @@ part1Submit.onclick = () => {
         }
 
         const label = document.createElement('label')
-        const movieName = movieList.children[i].childNodes[1].textContent
+        const movieName = Part1.movieList.children[i].childNodes[1].textContent
         label.textContent = movieName
         label.htmlFor = checkbox.id
         const li = document.createElement('li')
@@ -175,18 +170,16 @@ part1Submit.onclick = () => {
         checkboxList.appendChild(li)
     }
 
-    gVoteList = new Array(movieList.children.length)
+    gVoteList = new Array(Part1.movieList.children.length)
     gVoteList.fill(0)
-    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-    gVotesLeft = +voteCountInput.value
+    gVotesLeft = +Part1.voteCountInput.value
 }
 
 // part2
 const part2Submit = getNodeId('part2Submit') as HTMLButtonElement
 part2Submit.onclick = () => {
     if (gVotesLeft) { console.log('there are votes left'); return }
-    const voteCountInput = getNodeId('voteCountInput') as HTMLInputElement
-    gVotesLeft = +voteCountInput.value
+    gVotesLeft = +Part1.voteCountInput.value
 
     ++gCurrentNameIndex
 
@@ -201,10 +194,9 @@ part2Submit.onclick = () => {
     }
     part2Submit.disabled = true
 
-    const nameList = getNodeId('nameList') as HTMLUListElement
-    if (gCurrentNameIndex < nameList.children.length) {
+    if (gCurrentNameIndex < Part1.nameList.children.length) {
         const currentName = getNodeId('currentName') as HTMLHeadingElement
-        currentName.textContent = nameList.children[gCurrentNameIndex].childNodes[1].textContent
+        currentName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent
     } else {
         gCurrentNameIndex = 0
 
@@ -222,7 +214,6 @@ part2Submit.onclick = () => {
         sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a])
 
         // show results
-        const movieList = getNodeId('movieList') as HTMLUListElement
         const tableBody = document.getElementById('resultTableBody') as HTMLTableSectionElement
 
         // clear results table body before adding to it
@@ -232,7 +223,7 @@ part2Submit.onclick = () => {
 
         for (const i of sortedIndexList)  {
             const movieTd = document.createElement('td')
-            movieTd.textContent = movieList.children[i].childNodes[1].textContent
+            movieTd.textContent = Part1.movieList.children[i].childNodes[1].textContent
 
             const voteTd = document.createElement('td')
             voteTd.textContent = String(gVoteList[i])
@@ -249,14 +240,13 @@ part2Submit.onclick = () => {
 
         const restartButton = document.getElementById('restartButton') as HTMLButtonElement
         restartButton.onclick = () => {
-            const part1 = getNodeId('part1') as HTMLSpanElement
             const part3 = getNodeId('part3') as HTMLSpanElement
-            part1.hidden = false
+            Part1.span.hidden = false
             part3.hidden = true
 
             // clear movieList before re-adding the movies that are checked
-            while (movieList.firstChild) {
-                movieList.removeChild(movieList.firstChild)
+            while (Part1.movieList.firstChild) {
+                Part1.movieList.removeChild(Part1.movieList.firstChild)
             }
 
             for (const row of tableBody.children) {
@@ -266,7 +256,7 @@ part2Submit.onclick = () => {
                     const deleteButton = document.createElement('button')
                     deleteButton.textContent = 'X'
                     deleteButton.onclick = deleteFromList
-                    addElementsToList(movieList, deleteButton, movieName)
+                    addElementsToList(Part1.movieList, deleteButton, movieName)
                 }
             }
 

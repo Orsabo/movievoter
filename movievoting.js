@@ -1,24 +1,29 @@
 "use strict";
+class Part1 {
+}
+Part1.span = document.getElementById('part1');
+Part1.movieList = document.getElementById('movieList');
+Part1.movieTextArea = document.getElementById('movieTextArea');
+Part1.movieSubmitButton = document.getElementById('movieSubmitButton');
+Part1.nameList = document.getElementById('nameList');
+Part1.nameInput = document.getElementById('nameInput');
+Part1.nameSubmitButton = document.getElementById('nameSubmitButton');
+Part1.voteCountInput = document.getElementById('voteCountInput');
+Part1.submitButton = document.getElementById('part1Submit');
 function getNodeId(name) {
     return document.getElementById(name);
 }
 function checkPart1Validity() {
-    const movieList = getNodeId('movieList');
-    const nameList = getNodeId('nameList');
-    const voteCountInput = getNodeId('voteCountInput');
-    return nameList.children.length >= 2 && movieList.children.length >= 2 && voteCountInput.checkValidity();
+    return Part1.nameList.children.length >= 2 && Part1.movieList.children.length >= 2 && Part1.voteCountInput.checkValidity();
 }
 function disablePart1SubmitIfInvalid() {
-    const part1Submit = getNodeId('part1Submit');
-    part1Submit.disabled = !checkPart1Validity();
+    Part1.submitButton.disabled = !checkPart1Validity();
 }
 function updateVoteCountInput() {
-    const voteCountInput = getNodeId('voteCountInput');
-    const movieList = getNodeId('movieList');
-    const movieCount = movieList.children.length;
-    voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1);
-    if (+voteCountInput.value > +voteCountInput.max) {
-        voteCountInput.value = voteCountInput.max;
+    const movieCount = Part1.movieList.children.length;
+    Part1.voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1);
+    if (+Part1.voteCountInput.value > +Part1.voteCountInput.max) {
+        Part1.voteCountInput.value = Part1.voteCountInput.max;
     }
 }
 function deleteFromList(event) {
@@ -51,70 +56,58 @@ function addElementsToList(list, ...args) {
     list.appendChild(li);
 }
 function movieSubmit() {
-    const movieTextArea = getNodeId('movieTextArea');
-    const movieList = document.getElementById('movieList');
-    for (const movieName of movieTextArea.value.trim().split('\n')) {
+    for (const movieName of Part1.movieTextArea.value.trim().split('\n')) {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'X';
         deleteButton.onclick = deleteFromList;
-        addElementsToList(movieList, deleteButton, movieName);
+        addElementsToList(Part1.movieList, deleteButton, movieName);
     }
     updateVoteCountInput();
-    movieTextArea.value = '';
-    movieTextArea.focus();
+    Part1.movieTextArea.value = '';
+    Part1.movieTextArea.focus();
     disablePart1SubmitIfInvalid();
 }
 function nameSubmit() {
-    const nameList = getNodeId('nameList');
-    const nameInput = getNodeId('nameInput');
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'X';
     deleteButton.onclick = deleteFromList;
-    addElementsToList(nameList, deleteButton, nameInput.value);
-    nameInput.value = '';
+    addElementsToList(Part1.nameList, deleteButton, Part1.nameInput.value);
+    Part1.nameInput.value = '';
     disablePart1SubmitIfInvalid();
 }
 {
-    const movieSubmitButton = getNodeId('movieSubmitButton');
-    movieSubmitButton.onclick = movieSubmit;
+    Part1.movieSubmitButton.onclick = movieSubmit;
 }
 {
-    const nameSubmitButton = getNodeId('nameSubmitButton');
-    nameSubmitButton.onclick = nameSubmit;
+    Part1.nameSubmitButton.onclick = nameSubmit;
 }
 {
-    const nameInput = getNodeId('nameInput');
-    nameInput.onkeypress = (keyboardEvent) => {
+    Part1.nameInput.onkeypress = (keyboardEvent) => {
         if (keyboardEvent.key === 'Enter') {
             nameSubmit();
         }
     };
 }
 {
-    const voteCountInput = document.getElementById('voteCountInput');
-    voteCountInput.oninput = disablePart1SubmitIfInvalid;
+    Part1.voteCountInput.oninput = disablePart1SubmitIfInvalid;
 }
 let gVoteList = [];
 let gVotesLeft = 0;
 let gCurrentNameIndex = 0;
-const part1Submit = getNodeId('part1Submit');
-part1Submit.onclick = () => {
+Part1.submitButton.onclick = () => {
     if (!checkPart1Validity())
         return;
-    const part1 = getNodeId('part1');
     const part2 = getNodeId('part2');
-    part1.hidden = true;
+    Part1.span.hidden = true;
     part2.hidden = false;
-    const movieList = getNodeId('movieList');
-    const nameList = getNodeId('nameList');
     // setting up part 2
     const currentName = getNodeId('currentName');
-    currentName.textContent = nameList.children[gCurrentNameIndex].childNodes[1].textContent;
+    currentName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent;
     const checkboxList = getNodeId('checkboxList');
     while (checkboxList.firstChild) {
         checkboxList.removeChild(checkboxList.firstChild);
     }
-    for (let i = 0; i < movieList.children.length; ++i) {
+    for (let i = 0; i < Part1.movieList.children.length; ++i) {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = 'checkbox' + i;
@@ -144,7 +137,7 @@ part1Submit.onclick = () => {
             }
         };
         const label = document.createElement('label');
-        const movieName = movieList.children[i].childNodes[1].textContent;
+        const movieName = Part1.movieList.children[i].childNodes[1].textContent;
         label.textContent = movieName;
         label.htmlFor = checkbox.id;
         const li = document.createElement('li');
@@ -152,10 +145,9 @@ part1Submit.onclick = () => {
         li.appendChild(label);
         checkboxList.appendChild(li);
     }
-    gVoteList = new Array(movieList.children.length);
+    gVoteList = new Array(Part1.movieList.children.length);
     gVoteList.fill(0);
-    const voteCountInput = getNodeId('voteCountInput');
-    gVotesLeft = +voteCountInput.value;
+    gVotesLeft = +Part1.voteCountInput.value;
 };
 // part2
 const part2Submit = getNodeId('part2Submit');
@@ -164,8 +156,7 @@ part2Submit.onclick = () => {
         console.log('there are votes left');
         return;
     }
-    const voteCountInput = getNodeId('voteCountInput');
-    gVotesLeft = +voteCountInput.value;
+    gVotesLeft = +Part1.voteCountInput.value;
     ++gCurrentNameIndex;
     const checkboxes = document.getElementsByClassName('checkboxes');
     for (let i = 0; i < checkboxes.length; ++i) {
@@ -177,10 +168,9 @@ part2Submit.onclick = () => {
         checkbox.disabled = false;
     }
     part2Submit.disabled = true;
-    const nameList = getNodeId('nameList');
-    if (gCurrentNameIndex < nameList.children.length) {
+    if (gCurrentNameIndex < Part1.nameList.children.length) {
         const currentName = getNodeId('currentName');
-        currentName.textContent = nameList.children[gCurrentNameIndex].childNodes[1].textContent;
+        currentName.textContent = Part1.nameList.children[gCurrentNameIndex].childNodes[1].textContent;
     }
     else {
         gCurrentNameIndex = 0;
@@ -196,7 +186,6 @@ part2Submit.onclick = () => {
         }
         sortedIndexList.sort((a, b) => gVoteList[b] - gVoteList[a]);
         // show results
-        const movieList = getNodeId('movieList');
         const tableBody = document.getElementById('resultTableBody');
         // clear results table body before adding to it
         while (tableBody.firstChild) {
@@ -204,7 +193,7 @@ part2Submit.onclick = () => {
         }
         for (const i of sortedIndexList) {
             const movieTd = document.createElement('td');
-            movieTd.textContent = movieList.children[i].childNodes[1].textContent;
+            movieTd.textContent = Part1.movieList.children[i].childNodes[1].textContent;
             const voteTd = document.createElement('td');
             voteTd.textContent = String(gVoteList[i]);
             const checkbox = document.createElement('input');
@@ -217,13 +206,12 @@ part2Submit.onclick = () => {
         }
         const restartButton = document.getElementById('restartButton');
         restartButton.onclick = () => {
-            const part1 = getNodeId('part1');
             const part3 = getNodeId('part3');
-            part1.hidden = false;
+            Part1.span.hidden = false;
             part3.hidden = true;
             // clear movieList before re-adding the movies that are checked
-            while (movieList.firstChild) {
-                movieList.removeChild(movieList.firstChild);
+            while (Part1.movieList.firstChild) {
+                Part1.movieList.removeChild(Part1.movieList.firstChild);
             }
             for (const row of tableBody.children) {
                 const checkbox = row.children[0];
@@ -232,7 +220,7 @@ part2Submit.onclick = () => {
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = 'X';
                     deleteButton.onclick = deleteFromList;
-                    addElementsToList(movieList, deleteButton, movieName);
+                    addElementsToList(Part1.movieList, deleteButton, movieName);
                 }
             }
             updateVoteCountInput();
