@@ -103,13 +103,17 @@ class Part1 {
                 }
             }
 
-            const label = document.createElement('label')
-            const movieName = Part1.movieList.children[i].childNodes[1].textContent
-            label.textContent = movieName
-            label.htmlFor = checkbox.id
+
+            const href = document.createElement('a')
+            const movieName = Part1.movieList.children[i].childNodes[1].textContent!
+            href.textContent = movieName
+            // TODO: maybe use imdb's api
+            href.href = 'https://www.imdb.com/find?q=' + movieName.replace(' ', '+')
+            href.target = '_blank'
+
             const li = document.createElement('li')
             li.appendChild(checkbox)
-            li.appendChild(label)
+            li.appendChild(href)
             Part2.checkboxList.appendChild(li)
         }
 
