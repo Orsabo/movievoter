@@ -2,6 +2,7 @@ let gVoteList: number[] = []
 let gVotesLeft = 0
 
 let gVoterIndex = 0
+let gApikey = ''
 
 class Part1 {
     static readonly span = document.getElementById('part1') as HTMLSpanElement
@@ -16,6 +17,8 @@ class Part1 {
            
     static readonly voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
            
+    static readonly apikeyInput = document.getElementById('apikeyInput') as HTMLInputElement
+
     static readonly submitButton = document.getElementById('part1Submit') as HTMLButtonElement
 
     static submitIsValid() {
@@ -67,12 +70,17 @@ class Part1 {
         Part1.span.hidden = true
         Part2.span.hidden = false
 
+        gApikey = Part1.apikeyInput.value.trim()
+
         // setting up part 2
         Part2.voterName.textContent = Part1.nameList.children[gVoterIndex].childNodes[1].textContent
 
         while (Part2.checkboxList.firstChild) {
             Part2.checkboxList.removeChild(Part2.checkboxList.firstChild)
         }
+
+        Part2.responses = new Array(Part1.movieList.children.length)
+        Part2.responses.fill(null)
 
         for (let i = 0; i < Part1.movieList.children.length; ++i) {
             const checkbox = document.createElement('input')
@@ -104,16 +112,53 @@ class Part1 {
             }
 
 
-            const href = document.createElement('a')
             const movieName = Part1.movieList.children[i].childNodes[1].textContent!
-            href.textContent = movieName
-            // TODO: maybe use imdb's api
-            href.href = 'https://www.imdb.com/find?q=' + movieName.replace(' ', '+')
-            href.target = '_blank'
+            const movieNameSpan = document.createElement('span')
+            movieNameSpan.textContent = movieName
+            if (gApikey) {
+                movieNameSpan.onclick = async () => {
+                    while (Part2.searchResults.firstChild) {
+                        Part2.searchResults.removeChild(Part2.searchResults.firstChild)
+                    }
+
+                    Part2.selectedMovie.hidden = true
+                    Part2.selectedMovieImage.src = ''
+                    Part2.searchResults.hidden = false
+
+                    const movieObject = await (async () => {
+                        if (Part2.responses[i] === null) {
+                            const requestUrl = `https://www.omdbapi.com/?s=${movieName.replace(' ', '+')}&apikey=${gApikey}`
+                            const response = await fetch(requestUrl)
+                            const jsonObject = await response!.json()
+                            Part2.responses[i] = jsonObject
+                        }
+                        return Part2.responses[i]
+                    })()
+
+                    if (movieObject.Response === 'True') {
+                        for (const movie of movieObject.Search) {
+                            const li = document.createElement('li')
+                            li.textContent = `(${movie.Type} - ${movie.Year}): ${movie.Title}`
+                            li.onclick = () => {
+                                Part2.selectedMovieImage.src = movie.Poster
+                                Part2.selectedMovieTitle.textContent = movie.Title
+                                Part2.selectedMovieTitle.href = `https://www.imdb.com/title/${movie.imdbID}`
+                                Part2.selectedMovieYear.textContent = movie.Year
+                                Part2.selectedMovie.hidden = false
+                            }
+                            Part2.searchResults.appendChild(li)
+                        }
+                    } else {
+                        const li = document.createElement('li')
+                        li.textContent = movieObject.Error
+                        Part2.searchResults.appendChild(li)
+                    }
+                }
+            }
 
             const li = document.createElement('li')
             li.appendChild(checkbox)
-            li.appendChild(href)
+            li.appendChild(movieNameSpan)
             Part2.checkboxList.appendChild(li)
         }
 
@@ -123,17 +168,31 @@ class Part1 {
     }
 }
 
+type Nullable<T> = T | null
+
 class Part2 {
     static readonly span = document.getElementById('part2') as HTMLSpanElement
     static readonly voterName = document.getElementById('voterName') as HTMLHeadingElement
     static readonly checkboxList = document.getElementById('checkboxList') as HTMLUListElement
     static readonly submitButton = document.getElementById('part2Submit') as HTMLButtonElement
 
+    static readonly searchResults = document.getElementById('searchResults') as HTMLUListElement
+
+    static readonly selectedMovie = document.getElementById('selectedMovie') as HTMLSpanElement
+    static readonly selectedMovieImage = document.getElementById('selectedMovieImage') as HTMLImageElement
+    static readonly selectedMovieTitle = document.getElementById('selectedMovieTitle') as HTMLAnchorElement
+    static readonly selectedMovieYear = document.getElementById('selectedMovieYear') as HTMLLIElement
+
+    static responses: Nullable<any> []
+
     static submit() {
         if (gVotesLeft) { console.log('there are votes left'); return }
         gVotesLeft = +Part1.voteCountInput.value
 
         ++gVoterIndex
+
+        Part2.selectedMovie.hidden = true
+        Part2.searchResults.hidden = true
 
         const checkboxes = document.getElementsByClassName('checkboxes') as HTMLCollectionOf<HTMLInputElement>
             for (let i = 0; i < checkboxes.length; ++i) {

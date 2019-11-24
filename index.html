@@ -21,6 +21,9 @@
       <br/>
       <input type="number" id="voteCountInput" min="1" max="1" value="1" autocomplete="off" required>
       <br/>
+      <label for="apikeyInput">api key</label>
+      <input id="apikeyInput" placeholder="Optional">
+      <br/>
       <button id="part1Submit" disabled autocomplete="off">Confirm Choices</button>
     </span>
 
@@ -28,6 +31,18 @@
       <h1 id="voterName"></h1>
       <ul id="checkboxList"></ul>
       <button id="part2Submit" disabled autocomplete="off">Confirm Choices</button>
+
+      <br/>
+      <ul id="searchResults" hidden>
+      </ul>
+      <span id="selectedMovie" hidden>
+        <img id="selectedMovieImage" alt="The movie poster"></img>
+        <br/>
+        <ul>
+          <li>title: <a id="selectedMovieTitle" target="_blank"></a></li>
+          <li id="selectedMovieYear">year: </li>
+        </ul>
+      </span>
     </span>
 
     <span id="part3" hidden>

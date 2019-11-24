@@ -1,7 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 let gVoteList = [];
 let gVotesLeft = 0;
 let gVoterIndex = 0;
+let gApikey = '';
 class Part1 {
     static submitIsValid() {
         return Part1.nameList.children.length >= 2 &&
@@ -43,11 +52,14 @@ class Part1 {
             return;
         Part1.span.hidden = true;
         Part2.span.hidden = false;
+        gApikey = Part1.apikeyInput.value.trim();
         // setting up part 2
         Part2.voterName.textContent = Part1.nameList.children[gVoterIndex].childNodes[1].textContent;
         while (Part2.checkboxList.firstChild) {
             Part2.checkboxList.removeChild(Part2.checkboxList.firstChild);
         }
+        Part2.responses = new Array(Part1.movieList.children.length);
+        Part2.responses.fill(null);
         for (let i = 0; i < Part1.movieList.children.length; ++i) {
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
@@ -77,15 +89,50 @@ class Part1 {
                     ++gVotesLeft;
                 }
             };
-            const href = document.createElement('a');
             const movieName = Part1.movieList.children[i].childNodes[1].textContent;
-            href.textContent = movieName;
-            // TODO: maybe use imdb's api
-            href.href = 'https://www.imdb.com/find?q=' + movieName.replace(' ', '+');
-            href.target = '_blank';
+            const movieNameSpan = document.createElement('span');
+            movieNameSpan.textContent = movieName;
+            if (gApikey) {
+                movieNameSpan.onclick = () => __awaiter(this, void 0, void 0, function* () {
+                    while (Part2.searchResults.firstChild) {
+                        Part2.searchResults.removeChild(Part2.searchResults.firstChild);
+                    }
+                    Part2.selectedMovie.hidden = true;
+                    Part2.selectedMovieImage.src = '';
+                    Part2.searchResults.hidden = false;
+                    const movieObject = yield (() => __awaiter(this, void 0, void 0, function* () {
+                        if (Part2.responses[i] === null) {
+                            const requestUrl = `https://www.omdbapi.com/?s=${movieName.replace(' ', '+')}&apikey=${gApikey}`;
+                            const response = yield fetch(requestUrl);
+                            const jsonObject = yield response.json();
+                            Part2.responses[i] = jsonObject;
+                        }
+                        return Part2.responses[i];
+                    }))();
+                    if (movieObject.Response === 'True') {
+                        for (const movie of movieObject.Search) {
+                            const li = document.createElement('li');
+                            li.textContent = `(${movie.Type} - ${movie.Year}): ${movie.Title}`;
+                            li.onclick = () => {
+                                Part2.selectedMovieImage.src = movie.Poster;
+                                Part2.selectedMovieTitle.textContent = movie.Title;
+                                Part2.selectedMovieTitle.href = `https://www.imdb.com/title/${movie.imdbID}`;
+                                Part2.selectedMovieYear.textContent = movie.Year;
+                                Part2.selectedMovie.hidden = false;
+                            };
+                            Part2.searchResults.appendChild(li);
+                        }
+                    }
+                    else {
+                        const li = document.createElement('li');
+                        li.textContent = movieObject.Error;
+                        Part2.searchResults.appendChild(li);
+                    }
+                });
+            }
             const li = document.createElement('li');
             li.appendChild(checkbox);
-            li.appendChild(href);
+            li.appendChild(movieNameSpan);
             Part2.checkboxList.appendChild(li);
         }
         gVoteList = new Array(Part1.movieList.children.length);
@@ -101,6 +148,7 @@ Part1.nameList = document.getElementById('nameList');
 Part1.nameInput = document.getElementById('nameInput');
 Part1.nameSubmitButton = document.getElementById('nameSubmitButton');
 Part1.voteCountInput = document.getElementById('voteCountInput');
+Part1.apikeyInput = document.getElementById('apikeyInput');
 Part1.submitButton = document.getElementById('part1Submit');
 class Part2 {
     static submit() {
@@ -110,6 +158,8 @@ class Part2 {
         }
         gVotesLeft = +Part1.voteCountInput.value;
         ++gVoterIndex;
+        Part2.selectedMovie.hidden = true;
+        Part2.searchResults.hidden = true;
         const checkboxes = document.getElementsByClassName('checkboxes');
         for (let i = 0; i < checkboxes.length; ++i) {
             const checkbox = checkboxes[i];
@@ -159,6 +209,11 @@ Part2.span = document.getElementById('part2');
 Part2.voterName = document.getElementById('voterName');
 Part2.checkboxList = document.getElementById('checkboxList');
 Part2.submitButton = document.getElementById('part2Submit');
+Part2.searchResults = document.getElementById('searchResults');
+Part2.selectedMovie = document.getElementById('selectedMovie');
+Part2.selectedMovieImage = document.getElementById('selectedMovieImage');
+Part2.selectedMovieTitle = document.getElementById('selectedMovieTitle');
+Part2.selectedMovieYear = document.getElementById('selectedMovieYear');
 class Part3 {
     static restart() {
         Part1.span.hidden = false;
