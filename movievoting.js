@@ -91,8 +91,8 @@ class Part1 {
             };
             const movieName = Part1.movieList.children[i].childNodes[1].textContent;
             const movieNameSpan = document.createElement('span');
-            movieNameSpan.textContent = movieName;
             if (gApikey) {
+                movieNameSpan.textContent = movieName;
                 movieNameSpan.onclick = () => __awaiter(this, void 0, void 0, function* () {
                     while (Part2.searchResults.firstChild) {
                         Part2.searchResults.removeChild(Part2.searchResults.firstChild);
@@ -129,6 +129,14 @@ class Part1 {
                         Part2.searchResults.appendChild(li);
                     }
                 });
+            }
+            else {
+                const link = document.createElement('a');
+                link.href = `https://www.imdb.com/find?q=${movieName}`;
+                link.textContent = movieName;
+                link.target = '_blank';
+                link.rel = 'noreferrer';
+                movieNameSpan.appendChild(link);
             }
             const li = document.createElement('li');
             li.appendChild(checkbox);
