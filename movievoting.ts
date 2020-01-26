@@ -82,6 +82,18 @@ class Part1 {
             Part2.movies.push(child.childNodes[1].textContent!)
         }
 
+        const shuffle = (arr: any[]) => {
+            for (let i = arr.length - 1; i > 0; --i) {
+                const rand = Math.floor(Math.random() * (i + 1))
+                const tmp = arr[i];
+                arr[i] = arr[rand];
+                arr[rand] = tmp;
+            }
+        }
+
+        shuffle(Part2.names)
+        Part2.movies.sort()
+
         Part2.voterName.textContent = Part2.names[gVoterIndex]
 
         while (Part2.checkboxList.firstChild) {
