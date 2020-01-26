@@ -54,13 +54,21 @@ class Part1 {
         Part2.span.hidden = false;
         gApikey = Part1.apikeyInput.value.trim();
         // setting up part 2
-        Part2.voterName.textContent = Part1.nameList.children[gVoterIndex].childNodes[1].textContent;
+        Part2.names = [];
+        for (const child of Part1.nameList.children) {
+            Part2.names.push(child.childNodes[1].textContent);
+        }
+        Part2.movies = [];
+        for (const child of Part1.movieList.children) {
+            Part2.movies.push(child.childNodes[1].textContent);
+        }
+        Part2.voterName.textContent = Part2.names[gVoterIndex];
         while (Part2.checkboxList.firstChild) {
             Part2.checkboxList.removeChild(Part2.checkboxList.firstChild);
         }
-        Part2.responses = new Array(Part1.movieList.children.length);
+        Part2.responses = new Array(Part2.movies.length);
         Part2.responses.fill(null);
-        for (let i = 0; i < Part1.movieList.children.length; ++i) {
+        for (let i = 0; i < Part2.movies.length; ++i) {
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.id = 'checkbox' + i;
@@ -89,7 +97,7 @@ class Part1 {
                     ++gVotesLeft;
                 }
             };
-            const movieName = Part1.movieList.children[i].childNodes[1].textContent;
+            const movieName = Part2.movies[i];
             const movieNameSpan = document.createElement('span');
             if (gApikey) {
                 movieNameSpan.textContent = movieName;
@@ -143,7 +151,7 @@ class Part1 {
             li.appendChild(movieNameSpan);
             Part2.checkboxList.appendChild(li);
         }
-        gVoteList = new Array(Part1.movieList.children.length);
+        gVoteList = new Array(Part2.movies.length);
         gVoteList.fill(0);
         gVotesLeft = +Part1.voteCountInput.value;
     }
@@ -178,8 +186,8 @@ class Part2 {
             checkbox.disabled = false;
         }
         Part2.submitButton.disabled = true;
-        if (gVoterIndex < Part1.nameList.children.length) {
-            Part2.voterName.textContent = Part1.nameList.children[gVoterIndex].childNodes[1].textContent;
+        if (gVoterIndex < Part2.names.length) {
+            Part2.voterName.textContent = Part2.names[gVoterIndex];
         }
         else {
             gVoterIndex = 0;
@@ -199,7 +207,7 @@ class Part2 {
             }
             for (const i of sortedIndexList) {
                 const movieTd = document.createElement('td');
-                movieTd.textContent = Part1.movieList.children[i].childNodes[1].textContent;
+                movieTd.textContent = Part2.movies[i];
                 const voteTd = document.createElement('td');
                 voteTd.textContent = String(gVoteList[i]);
                 const checkbox = document.createElement('input');
