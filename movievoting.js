@@ -15,7 +15,8 @@ class Part1 {
     static submitIsValid() {
         return Part1.nameList.children.length >= 2 &&
             Part1.movieList.children.length >= 2 &&
-            Part1.voteCountInput.checkValidity();
+            Part1.voteCountInput.checkValidity() &&
+            Part1.votableMoviesCount.checkValidity();
     }
     static disableSubmitIfInvalid() {
         Part1.submitButton.disabled = !Part1.submitIsValid();
@@ -27,6 +28,11 @@ class Part1 {
             Part1.voteCountInput.value = Part1.voteCountInput.max;
         }
     }
+    static updateVotableMoviesCount() {
+        const movieCount = Part1.movieList.children.length;
+        Part1.votableMoviesCount.max = String(movieCount);
+        Part1.votableMoviesCount.value = Part1.votableMoviesCount.max;
+    }
     static movieSubmit() {
         for (const movieName of Part1.movieTextArea.value.trim().split('\n')) {
             const deleteButton = document.createElement('button');
@@ -34,6 +40,7 @@ class Part1 {
             deleteButton.onclick = deleteFromList;
             addElementsToList(Part1.movieList, deleteButton, movieName);
         }
+        Part1.updateVotableMoviesCount();
         Part1.updateVoteCountInput();
         Part1.movieTextArea.value = '';
         Part1.movieTextArea.focus();
@@ -71,6 +78,9 @@ class Part1 {
             }
         };
         shuffle(Part2.names);
+        // only select votableMoviesCount amount of movies
+        shuffle(Part2.movies);
+        Part2.movies = Part2.movies.slice(0, +Part1.votableMoviesCount.value);
         Part2.movies.sort();
         Part2.voterName.textContent = Part2.names[gVoterIndex];
         while (Part2.checkboxList.firstChild) {
@@ -120,6 +130,7 @@ class Part1 {
                     Part2.searchResults.hidden = false;
                     const movieObject = yield (() => __awaiter(this, void 0, void 0, function* () {
                         if (Part2.responses[i] === null) {
+                            // TODO: Detect if apikey is invalid (should return 401 if it is) and prevent further requests if so (i.e. set gApikey to '')
                             const requestUrl = `https://www.omdbapi.com/?s=${movieName.replace(' ', '+')}&apikey=${gApikey}`;
                             const response = yield fetch(requestUrl);
                             const jsonObject = yield response.json();
@@ -174,6 +185,7 @@ Part1.nameList = document.getElementById('nameList');
 Part1.nameInput = document.getElementById('nameInput');
 Part1.nameSubmitButton = document.getElementById('nameSubmitButton');
 Part1.voteCountInput = document.getElementById('voteCountInput');
+Part1.votableMoviesCount = document.getElementById('votableMoviesCount');
 Part1.apikeyInput = document.getElementById('apikeyInput');
 Part1.submitButton = document.getElementById('part1Submit');
 class Part2 {
@@ -278,6 +290,7 @@ function deleteFromList(event) {
     list.removeChild(element);
     if (list == Part1.movieList) {
         Part1.updateVoteCountInput();
+        Part1.updateVotableMoviesCount();
     }
 }
 function addElementsToList(list, ...args) {
@@ -305,6 +318,7 @@ Part1.nameInput.onkeypress = (keyboardEvent) => {
     }
 };
 Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid;
+Part1.votableMoviesCount.oninput = Part1.disableSubmitIfInvalid;
 Part1.submitButton.onclick = Part1.submit;
 Part2.submitButton.onclick = Part2.submit;
 Part3.restartButton.onclick = Part3.restart;

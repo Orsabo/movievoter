@@ -13,17 +13,28 @@
       <textarea id="movieTextArea"></textarea>
       <button id="movieSubmitButton">Submit</button>
       <br/>
+
+      <label for="votableMoviesCount">How many movies should be voted on?</label>
+      <br/>
+      <input type="number" id="votableMoviesCount" min="1" max="1" value="1" autocomplete="off" required>
+      <br/>
+
       <label for="nameList">Name List</label>
       <ul id="nameList"></ul>
       <label for="nameInput">name</label>
       <input id="nameInput">
       <button id="nameSubmitButton">Submit</button>
       <br/>
+
+      <label for="voteCountInput">How many votes should each person have?</label>
+      <br/>
       <input type="number" id="voteCountInput" min="1" max="1" value="1" autocomplete="off" required>
       <br/>
+
       <label for="apikeyInput">api key</label>
       <input id="apikeyInput" placeholder="Optional">
       <br/>
+
       <button id="part1Submit" disabled autocomplete="off">Confirm Choices</button>
     </span>
 
