@@ -16,22 +16,29 @@ class Part1 {
         return Part1.nameList.children.length >= 2 &&
             Part1.movieList.children.length >= 2 &&
             Part1.voteCountInput.checkValidity() &&
-            Part1.votableMoviesCount.checkValidity();
+            Part1.votableMoviesCountInput.checkValidity();
     }
     static disableSubmitIfInvalid() {
         Part1.submitButton.disabled = !Part1.submitIsValid();
     }
-    static updateVoteCountInput() {
+    static updateVotableMoviesCount() {
         const movieCount = Part1.movieList.children.length;
-        Part1.voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1);
+        // it doesn't make sense to have votable movies be less than 2
+        Part1.votableMoviesCountInput.max = movieCount <= 2 ? '2' : String(movieCount);
+        Part1.votableMoviesCountInput.value = Part1.votableMoviesCountInput.max;
+        // the vote count is dependent on how many movies are available for voting
+        Part1.updateVoteCountInput();
+    }
+    static updateVoteCountInput() {
+        const votableMoviesCount = +Part1.votableMoviesCountInput.value;
+        Part1.voteCountInput.max = String((votableMoviesCount > 1) ? votableMoviesCount - 1 : 1);
         if (+Part1.voteCountInput.value > +Part1.voteCountInput.max) {
             Part1.voteCountInput.value = Part1.voteCountInput.max;
         }
     }
-    static updateVotableMoviesCount() {
-        const movieCount = Part1.movieList.children.length;
-        Part1.votableMoviesCount.max = String(movieCount);
-        Part1.votableMoviesCount.value = Part1.votableMoviesCount.max;
+    static updateCounts() {
+        // updateVotableMoviesCount calls updateVoteCountInput
+        Part1.updateVotableMoviesCount();
     }
     static movieSubmit() {
         for (const movieName of Part1.movieTextArea.value.trim().split('\n')) {
@@ -40,8 +47,7 @@ class Part1 {
             deleteButton.onclick = deleteFromList;
             addElementsToList(Part1.movieList, deleteButton, movieName);
         }
-        Part1.updateVotableMoviesCount();
-        Part1.updateVoteCountInput();
+        Part1.updateCounts();
         Part1.movieTextArea.value = '';
         Part1.movieTextArea.focus();
         Part1.disableSubmitIfInvalid();
@@ -79,9 +85,9 @@ class Part1 {
             }
         };
         shuffle(Part2.names);
-        // only select votableMoviesCount amount of movies
+        // only select votableMoviesCountInput amount of movies
         shuffle(Part2.movies);
-        Part2.movies = Part2.movies.slice(0, +Part1.votableMoviesCount.value);
+        Part2.movies = Part2.movies.slice(0, +Part1.votableMoviesCountInput.value);
         Part2.movies.sort();
         Part2.voterName.textContent = Part2.names[gVoterIndex];
         while (Part2.checkboxList.firstChild) {
@@ -186,7 +192,7 @@ Part1.nameList = document.getElementById('nameList');
 Part1.nameInput = document.getElementById('nameInput');
 Part1.nameSubmitButton = document.getElementById('nameSubmitButton');
 Part1.voteCountInput = document.getElementById('voteCountInput');
-Part1.votableMoviesCount = document.getElementById('votableMoviesCount');
+Part1.votableMoviesCountInput = document.getElementById('votableMoviesCountInput');
 Part1.apikeyInput = document.getElementById('apikeyInput');
 Part1.submitButton = document.getElementById('part1Submit');
 class Part2 {
@@ -271,7 +277,7 @@ class Part3 {
                 addElementsToList(Part1.movieList, deleteButton, movieName);
             }
         }
-        Part1.updateVoteCountInput();
+        Part1.updateCounts();
         Part1.disableSubmitIfInvalid();
     }
 }
@@ -290,8 +296,7 @@ function deleteFromList(event) {
     }
     list.removeChild(element);
     if (list == Part1.movieList) {
-        Part1.updateVoteCountInput();
-        Part1.updateVotableMoviesCount();
+        Part1.updateCounts();
     }
 }
 function addElementsToList(list, ...args) {
@@ -318,8 +323,11 @@ Part1.nameInput.onkeypress = (keyboardEvent) => {
         Part1.nameSubmit();
     }
 };
+Part1.votableMoviesCountInput.oninput = () => {
+    Part1.updateVoteCountInput();
+    Part1.disableSubmitIfInvalid();
+};
 Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid;
-Part1.votableMoviesCount.oninput = Part1.disableSubmitIfInvalid;
 Part1.submitButton.onclick = Part1.submit;
 Part2.submitButton.onclick = Part2.submit;
 Part3.restartButton.onclick = Part3.restart;

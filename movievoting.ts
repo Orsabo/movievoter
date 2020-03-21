@@ -17,7 +17,7 @@ class Part1 {
            
     static readonly voteCountInput = document.getElementById('voteCountInput') as HTMLInputElement
            
-    static readonly votableMoviesCount = document.getElementById('votableMoviesCount') as HTMLInputElement
+    static readonly votableMoviesCountInput = document.getElementById('votableMoviesCountInput') as HTMLInputElement
 
     static readonly apikeyInput = document.getElementById('apikeyInput') as HTMLInputElement
 
@@ -27,26 +27,36 @@ class Part1 {
         return Part1.nameList.children.length >= 2 &&
             Part1.movieList.children.length >= 2 &&
             Part1.voteCountInput.checkValidity() &&
-            Part1.votableMoviesCount.checkValidity()
+            Part1.votableMoviesCountInput.checkValidity()
     }
 
     static disableSubmitIfInvalid() {
         Part1.submitButton.disabled = !Part1.submitIsValid()
     }
 
-    static updateVoteCountInput() {
+    static updateVotableMoviesCount() {
         const movieCount = Part1.movieList.children.length
 
-        Part1.voteCountInput.max = String((movieCount > 1) ? movieCount - 1 : 1)
+        // it doesn't make sense to have votable movies be less than 2
+        Part1.votableMoviesCountInput.max = movieCount <= 2 ? '2' : String(movieCount)
+        Part1.votableMoviesCountInput.value = Part1.votableMoviesCountInput.max
+
+        // the vote count is dependent on how many movies are available for voting
+        Part1.updateVoteCountInput()
+    }
+
+    static updateVoteCountInput() {
+        const votableMoviesCount = +Part1.votableMoviesCountInput.value
+
+        Part1.voteCountInput.max = String((votableMoviesCount > 1) ? votableMoviesCount - 1 : 1)
         if (+Part1.voteCountInput.value > +Part1.voteCountInput.max) {
             Part1.voteCountInput.value = Part1.voteCountInput.max
         }
     }
 
-    static updateVotableMoviesCount() {
-        const movieCount = Part1.movieList.children.length
-        Part1.votableMoviesCount.max = String(movieCount)
-        Part1.votableMoviesCount.value = Part1.votableMoviesCount.max
+    static updateCounts() {
+        // updateVotableMoviesCount calls updateVoteCountInput
+        Part1.updateVotableMoviesCount()
     }
 
     static movieSubmit() {
@@ -57,8 +67,7 @@ class Part1 {
             addElementsToList(Part1.movieList, deleteButton, movieName)
         }
 
-        Part1.updateVotableMoviesCount()
-        Part1.updateVoteCountInput()
+        Part1.updateCounts()
         Part1.movieTextArea.value = ''
         Part1.movieTextArea.focus()
         Part1.disableSubmitIfInvalid()
@@ -104,9 +113,9 @@ class Part1 {
 
         shuffle(Part2.names)
 
-        // only select votableMoviesCount amount of movies
+        // only select votableMoviesCountInput amount of movies
         shuffle(Part2.movies)
-        Part2.movies = Part2.movies.slice(0, +Part1.votableMoviesCount.value)
+        Part2.movies = Part2.movies.slice(0, +Part1.votableMoviesCountInput.value)
         Part2.movies.sort()
 
         Part2.voterName.textContent = Part2.names[gVoterIndex]
@@ -319,7 +328,7 @@ class Part3 {
                 }
         }
 
-        Part1.updateVoteCountInput()
+        Part1.updateCounts()
         Part1.disableSubmitIfInvalid()
     }
 }
@@ -337,8 +346,7 @@ function deleteFromList(event: MouseEvent) {
     list!.removeChild(element!)
 
     if (list == Part1.movieList) {
-        Part1.updateVoteCountInput()
-        Part1.updateVotableMoviesCount()
+        Part1.updateCounts()
     }
 }
 
@@ -367,8 +375,12 @@ Part1.nameInput.onkeypress = (keyboardEvent) => {
         Part1.nameSubmit()
     }
 }
+
+Part1.votableMoviesCountInput.oninput = () => {
+    Part1.updateVoteCountInput()
+    Part1.disableSubmitIfInvalid()
+}
 Part1.voteCountInput.oninput = Part1.disableSubmitIfInvalid
-Part1.votableMoviesCount.oninput = Part1.disableSubmitIfInvalid
 
 Part1.submitButton.onclick = Part1.submit
 Part2.submitButton.onclick = Part2.submit
