@@ -81,6 +81,7 @@ class Part1 {
         Part2.span.hidden = false
 
         gApikey = Part1.apikeyInput.value.trim()
+        localStorage.apikey = gApikey
 
         // setting up part 2
         Part2.names = []
@@ -372,3 +373,7 @@ Part1.votableMoviesCount.oninput = Part1.disableSubmitIfInvalid
 Part1.submitButton.onclick = Part1.submit
 Part2.submitButton.onclick = Part2.submit
 Part3.restartButton.onclick = Part3.restart
+
+if (localStorage.apikey) {
+     Part1.apikeyInput.value = localStorage.apikey
+}
